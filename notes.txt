@@ -1,0 +1,20 @@
+- bash script that sleeps in between calls in a for loop?
+	- have to hard code class codes
+		- can just put in file after scraping once
+			- parse file and choose which params to scrape on based on cmd args?
+	- test
+- what do we want
+	- search by build name
+		- code and name
+			- need some list of these (?)
+			- prolly another table for these mappings?
+	- search by time
+	- search by day
+	- name, section, etc.
+
+avg of 1.5 min, and 75 entries from astro.
+around 180 total class code
+=> 270 min, 4.5 hours, 14k entries
+- DO, laptop + bridged VM(s), mac + bridged VM(s)
+~ 1 hour if use about 5 machines
+	- merging data?
