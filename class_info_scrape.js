@@ -179,8 +179,8 @@ function parseInfo(classid, sectionArr) {
             W : w,
             Th : th,
             F : f,
-            start : classtime['name'],
-            end : classtime['name'],
+            start : classtime['start'],
+            end : classtime['end'],
         });
     }
 
