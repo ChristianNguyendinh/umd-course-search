@@ -1,7 +1,8 @@
 const request = require("request");
 const cheerio = require("cheerio");
-const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database(__dirname + "/secrettest.db");
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+const mongoConfig = require('./config.json').mongodb;
 
 function wait() {
     var i = 0;
@@ -192,15 +193,17 @@ function parseInfo(classid, sectionArr) {
 }
 
 function storeInfo(parsedArr) {
-    db.serialize(() => {
-        parsedArr.forEach(function(element) {
-            db.run("INSERT INTO test (course, section, room, m, tu, w, th, f, start, end) VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8, $9, $10);",
-                [
-                    element['course'], element['section'], element['room'], element['M'], element['Tu'], 
-                    element['W'], element['Th'], element['F'], element['start'], element['end']
-                ]
-            );
-        
+    // this is bad
+    MongoClient.connect(mongoConfig.url, function (err, client) {
+        if (err) throw (err);
+
+        const db = client.db(mongoConfig.database);
+        const collection = db.collection(mongoConfig.courses);
+
+        collection.insertMany(parsedArr, function (err, result) {
+            if (err) return console.log("Error inserting");
+
+            client.close();
         });
     });
 }
