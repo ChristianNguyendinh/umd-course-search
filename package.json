@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ChristianNguyendinh/umd-course-search/issues"
   },
-  "homepage": "https://github.com/ChristianNguyendinh/umd-course-search#readme"
+  "homepage": "https://github.com/ChristianNguyendinh/umd-course-search#readme",
+  "dependencies": {
+    "mongodb": "^3.1.0"
+  }
 }
