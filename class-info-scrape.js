@@ -4,6 +4,9 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const mongoConfig = require('./config.json').mongodb;
 
+/**
+ * Helper function that when you actually think about it, is pretty useless and overthought
+ */
 function wait() {
     var i = 0;
     /*
@@ -23,6 +26,13 @@ function wait() {
     }
 }
 
+/**
+ * Takes in a semester code (ex. 201801), and scrapes NTST to get the course categories
+ * (ex. CMSC or ASTR), currently planned for that semester. Prints out the list to standard
+ * out. Newline separated
+ * 
+ * @param {string} semester - semester code of course categories to get
+ */
 function getCategories(semester) {
     request.get(
         {
@@ -58,6 +68,13 @@ function getCategories(semester) {
     );
 }
 
+/**
+ * Gets all courses for the given course category in the given semester, then
+ * sets off a ~1 second delay between calling getInfo on each course.
+ * 
+ * @param {*} semester - semester code
+ * @param {*} category - course category
+ */
 function getClassids(semester, category) {
     request.get(
         {
@@ -93,6 +110,15 @@ function getClassids(semester, category) {
     );
 }
 
+/**
+ * Takes a given course for a given semester and sends a query to get the
+ * sections for that course. Then formats those sections into an array of
+ * objects containing section name, building, times, etc. Calls parseInfo 
+ * on the list of sections.
+ * 
+ * @param {*} semester 
+ * @param {*} classid
+ */
 function getInfo(semester, classid) {
     request.get(
         {
@@ -146,7 +172,7 @@ function getInfo(semester, classid) {
 
 }
 
-/*
+/* example section object.
 { name: '0103',
   building: 'PHY',
   room: '1412',
@@ -161,6 +187,15 @@ function getInfo(semester, classid) {
   end: '2:50pm' }
 ...
 */
+
+/**
+ * Takes in a course id and list of section objects for that course. Formats each
+ * section object for insertion into the databaes, calls storeInfo on the list of
+ * sections.
+ * 
+ * @param {*} classid 
+ * @param {*} sectionArr 
+ */
 function parseInfo(classid, sectionArr) {
     var parsedArr = [];
 
@@ -192,6 +227,12 @@ function parseInfo(classid, sectionArr) {
     storeInfo(parsedArr);
 }
 
+/**
+ * Takes in an array of formatted section objects, stores the section objects
+ * in mongoDB based on the config file.
+ * 
+ * @param {*} parsedArr 
+ */
 function storeInfo(parsedArr) {
     // this is bad
     MongoClient.connect(mongoConfig.url, function (err, client) {
@@ -215,7 +256,7 @@ function storeInfo(parsedArr) {
 var args = process.argv.slice(2);
 // for now expect one argument of the class category (ex. CMSC) we want
 if (args.length == 1) {
-    getClassids("201801", args[0]);
+    getClassids("201808", args[0]);
 } else {
     console.error("Invalid arguments");
 }

@@ -11,7 +11,7 @@ if [ $# -eq 3 ] && [ $2 -eq $2 ] && [ $3 -eq $3 ]; then
     while IFS='' read -r line || [[ -n "$line" ]]; do
         if [ $i -lt $max ] && [ $i -ge $min ]; then
             echo "Processing: $line"
-            node class_info_scrape.js $line
+            node class-info-scrape.js $line
             sleep 1
         fi
         ((i++))

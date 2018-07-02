@@ -3,8 +3,18 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const mongoConfig = require('./config.json').mongodb;
 
-function insertBuildings() {
-    fs.readFile('./buildings.txt', 'utf8', function (err, data) {
+/**
+ * Takes in a filename containing a list of buildings, and inserts
+ * those buildings into a mongoDB collection based on the config file.
+ * Expects parameters to be in the JSON format that is provided by
+ * UMD terpnav's API.
+ * 
+ * @param {string} filename - name of file containing building data
+ * 
+ * @returns {undefined}
+ */
+function insertBuildings(filename) {
+    fs.readFile(filename, 'utf8', function (err, data) {
         if (err) throw(err);
 
         MongoClient.connect(mongoConfig.url, function (err, client) {
@@ -40,4 +50,4 @@ function insertBuildings() {
     });
 }
 
-insertBuildings();
+insertBuildings('./buildings.txt');
