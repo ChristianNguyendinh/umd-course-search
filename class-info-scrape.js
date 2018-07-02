@@ -139,6 +139,12 @@ function getInfo(semester, classid) {
                     var name = $(this).find(".section-id").text().trim();
 
                     $(this).find(".class-days-container").find(".row").each(function() {
+                        // we really need to find a different library
+                        if ($(this).find(".building-code").text() == "") {
+                            console.log("skipping ", classid, "'s section: ", name);
+                            return;
+                        }
+
                         var building = $(this).find(".building-code").text().trim();
                         var room = $(this).find(".class-room").text().trim();//.replace("ONLINE", "");
                         var days = $(this).find(".section-days").text().trim()
@@ -155,7 +161,8 @@ function getInfo(semester, classid) {
                                 end : etime
                             })
                         }
-                    })
+                    });
+
                     current++;
                     if (current >= total) {
                         resolve()
@@ -165,7 +172,11 @@ function getInfo(semester, classid) {
                 // for (var c of sectionArray) {
                 //     console.log(c)
                 // }
-                parseInfo(classid, sectionArray);
+                if (sectionArray.length > 0) {
+                    parseInfo(classid, sectionArray);
+                } else {
+                    console.log("skipping course: ", classid);
+                }
             }); 
         }
     );
@@ -198,6 +209,8 @@ function getInfo(semester, classid) {
  */
 function parseInfo(classid, sectionArr) {
     var parsedArr = [];
+
+    console.log("Parsing sections for: ", classid);
 
     for (classtime of sectionArr) {
         var m = classtime['days'].includes("M").toString();
@@ -242,7 +255,7 @@ function storeInfo(parsedArr) {
         const collection = db.collection(mongoConfig.courses);
 
         collection.insertMany(parsedArr, function (err, result) {
-            if (err) return console.log("Error inserting");
+            if (err) return console.log("Error inserting: ", err, "\n", JSON.stringify(parsedArr));
 
             client.close();
         });
