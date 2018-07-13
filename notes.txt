@@ -22,13 +22,17 @@ around 180 total class code
 
 - see terpnav for searchbar stuff
 
+MVP:
+- can search by buildings and day/time
+
 TODO:
-- jsdocs
-- move course category fetch to its own script
-- rename methods and scripts
 - move scrapers to a separate folder, set globals somehow to get path properly
 	- class?
 	- src folder?
-- update course category codes
-- actually run scripts (~10 minutes per department, 180 departments... 30 hours...) - We can actually do this as we work on other stuff if we just get a sample of data
+- find out best way to search
+- basic front end
 - clean up scrape scripts (lint, async, mongo is inefficient rn, etc.) - CAN BE DONE LATER
+	- jesus this code is disguisting
+		- we should do this soon
+- actually run scripts (~10 minutes per department, 180 departments... 30 hours...) - We can actually do this as we work on other stuff if we just get a sample of data
+- typescript?? xdxdxd

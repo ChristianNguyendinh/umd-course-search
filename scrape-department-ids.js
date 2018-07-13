@@ -1,7 +1,14 @@
 const request = require("request");
 const cheerio = require("cheerio");
 
-function getCategories(semester) {
+/**
+ * Takes in a semester code (ex. 201801), and scrapes NTST to get the course categories
+ * (ex. CMSC or ASTR), currently planned for that semester. Prints out the list to standard
+ * out. Newline separated
+ * 
+ * @param {string} semester - semester code of course categories to get
+ */
+function scrapeDepartmentIds(semester) {
     if (semester != null) {
         request.get(
             {
@@ -38,4 +45,4 @@ function getCategories(semester) {
     }
 }
 
-getCategories("201801");
+scrapeDepartmentIds("201801");

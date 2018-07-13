@@ -21,56 +21,14 @@ function wait() {
         i += 1;
         setTimeout(() => { 
             console.log("Getting info for: " + cid);
-            getInfo(semester, cid);
+            getClassInfo(semester, cid);
         }, 3000 * i);
     }
 }
 
 /**
- * Takes in a semester code (ex. 201801), and scrapes NTST to get the course categories
- * (ex. CMSC or ASTR), currently planned for that semester. Prints out the list to standard
- * out. Newline separated
- * 
- * @param {string} semester - semester code of course categories to get
- */
-function getCategories(semester) {
-    request.get(
-        {
-            "baseUrl": "https://ntst.umd.edu/",
-            "url": "soc/" + semester,
-        },
-        function(err, res, body) {
-            if (err) return console.log(err);
-
-            var $ = cheerio.load(body);
-            var classArray = [];
-            var total = $(".prefix-abbrev").length;
-            var current = 0;
-
-            var p = new Promise(function(resolve, reject) {
-                $(".prefix-abbrev").each(function(i, elem) {
-                    classArray.push($(this).text())
-
-                    current++;
-                    if (current >= total) {
-                        resolve()
-                    }
-                });
-            }).then(function(success) {
-                for (var c of classArray) {
-                    console.log(c)
-                }
-                
-                // getClassids(semester, classArray)
-
-            }); 
-        }
-    );
-}
-
-/**
  * Gets all courses for the given course category in the given semester, then
- * sets off a ~1 second delay between calling getInfo on each course.
+ * sets off a ~1 second delay between calling getClassInfo on each course.
  * 
  * @param {*} semester - semester code
  * @param {*} category - course category
@@ -119,7 +77,7 @@ function getClassids(semester, category) {
  * @param {*} semester 
  * @param {*} classid
  */
-function getInfo(semester, classid) {
+function getClassInfo(semester, classid) {
     request.get(
         {
             "baseUrl": "https://ntst.umd.edu/",
@@ -173,7 +131,7 @@ function getInfo(semester, classid) {
                 //     console.log(c)
                 // }
                 if (sectionArray.length > 0) {
-                    parseInfo(classid, sectionArray);
+                    parseSectionInfo(classid, sectionArray);
                 } else {
                     console.log("skipping course: ", classid);
                 }
@@ -201,13 +159,13 @@ function getInfo(semester, classid) {
 
 /**
  * Takes in a course id and list of section objects for that course. Formats each
- * section object for insertion into the databaes, calls storeInfo on the list of
+ * section object for insertion into the databaes, calls storeSectionInfo on the list of
  * sections.
  * 
  * @param {*} classid 
  * @param {*} sectionArr 
  */
-function parseInfo(classid, sectionArr) {
+function parseSectionInfo(classid, sectionArr) {
     var parsedArr = [];
 
     console.log("Parsing sections for: ", classid);
@@ -237,7 +195,7 @@ function parseInfo(classid, sectionArr) {
     //     console.log(c);
     // }
 
-    storeInfo(parsedArr);
+    storeSectionInfo(parsedArr);
 }
 
 /**
@@ -246,8 +204,9 @@ function parseInfo(classid, sectionArr) {
  * 
  * @param {*} parsedArr 
  */
-function storeInfo(parsedArr) {
-    // this is bad
+function storeSectionInfo(parsedArr) {
+    // this is bad - actually this isn't too bad, whole section list at a time
+    // new connect each class info? don't think section arrs will be too big anyway
     MongoClient.connect(mongoConfig.url, function (err, client) {
         if (err) throw (err);
 
@@ -262,14 +221,15 @@ function storeInfo(parsedArr) {
     });
 }
 
-// getCategories > getClassids (for each) > getInfo > parseInfo > storeInfo
+// getCategories > getClassids (for each) > getClassInfo > parseSectionInfo > storeSectionInfo
 // BMGT340, ASTR230, EDCP108M
 // getClassids("201801", "CMSC");
 
 var args = process.argv.slice(2);
 // for now expect one argument of the class category (ex. CMSC) we want
-if (args.length == 1) {
-    getClassids("201808", args[0]);
+if (args.length == 2) {
+    getClassids(args[0], args[1]);
 } else {
     console.error("Invalid arguments");
+    console.error('Usage: node class-info-scrape.js <semester id> <department id>');
 }
