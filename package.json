@@ -17,6 +17,12 @@
   },
   "homepage": "https://github.com/ChristianNguyendinh/umd-course-search#readme",
   "dependencies": {
-    "mongodb": "^3.1.0"
+    "cheerio": "^1.0.0-rc.2",
+    "module-alias": "^2.1.0",
+    "mongodb": "^3.1.0",
+    "request": "^2.87.0"
+  },
+  "_moduleAliases": {
+    "@root": "."
   }
 }

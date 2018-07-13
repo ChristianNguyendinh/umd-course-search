@@ -1,8 +1,8 @@
+require('module-alias/register');
 const request = require("request");
 const cheerio = require("cheerio");
 const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const mongoConfig = require('./config.json').mongodb;
+const mongoConfig = require('@root/config.json').mongodb;
 
 /**
  * Helper function that when you actually think about it, is pretty useless and overthought
@@ -231,5 +231,5 @@ if (args.length == 2) {
     getClassids(args[0], args[1]);
 } else {
     console.error("Invalid arguments");
-    console.error('Usage: node class-info-scrape.js <semester id> <department id>');
+    console.error('Usage: node scrape-class-info.js <semester id> <department id>');
 }
