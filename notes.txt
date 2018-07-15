@@ -26,9 +26,6 @@ MVP:
 - can search by buildings and day/time
 
 TODO:
-- move scrapers to a separate folder, set globals somehow to get path properly
-	- class?
-	- src folder?
 - find out best way to search
 - basic front end
 - clean up scrape scripts (lint, async, mongo is inefficient rn, etc.) - CAN BE DONE LATER
@@ -36,3 +33,5 @@ TODO:
 		- we should do this soon
 - actually run scripts (~10 minutes per department, 180 departments... 30 hours...) - We can actually do this as we work on other stuff if we just get a sample of data
 - typescript?? xdxdxd
+
+

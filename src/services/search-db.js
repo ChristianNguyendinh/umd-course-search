@@ -1,0 +1,77 @@
+require('module-alias/register');
+const MongoClient = require('mongodb').MongoClient;
+const mongoConfig = require('@root/config.json').mongodb;
+const assert = require('assert');
+
+function checkStartBefore(hour, minute) {
+    if (this.startHour < hour) {
+        return true;
+    } else if (this.startHour == hour) {
+        return this.startMinute <= minute;
+    }
+    return false;
+}
+
+function checkEndAfter(hour, minute) {
+    if (this.endHour > hour) {
+        return true;
+    } else if (this.endHour == hour) {
+        return this.endMinute >= minute;
+    }
+    return false;
+}
+
+function queryDB(building, hour, minute, day, room) {
+    MongoClient.connect(mongoConfig.url, function (err, client) {
+        if (err) throw (err);
+
+        const db = client.db(mongoConfig.database);
+        const collection = db.collection(mongoConfig.courses);
+
+        const query = {};
+        
+        if (building) {
+            query['building'] = building;
+        }
+
+        if (room) {
+            query['room'] = room;
+        }
+
+        if (hour && minute) {
+            query['$where'] = function() {
+                let start = false;
+                let end = false;
+
+                if (this.startHour < hour) {
+                    start = true;
+                } else if (this.startHour == hour) {
+                    start = this.startMinute <= minute;
+                }
+
+                if (this.endHour > hour) {
+                    end = true;
+                } else if (this.endHour == hour) {
+                    end = this.endMinute >= minute;
+                }
+                return start && end;
+            }
+        }
+        // validate day or assume validation done? worst case empty query
+        if (day) {
+            query[day] = true;
+        }
+        console.log(query);
+
+        collection.find(query).toArray(function(err, docs) {
+            if (err) return console.log(err);
+
+            console.log(docs);
+            client.close();
+        });
+    });
+}
+
+// db.courses.find({building: 'ATL', $expr: { $cond: { if: { $eq: ["$startHour", 8] } }, then: { $lte: ["$startMinute", 32] }, else: { $lt: ["$startHour", 8] } } })
+
+queryDB('ATL', '8', '32');

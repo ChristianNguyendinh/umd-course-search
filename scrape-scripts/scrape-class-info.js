@@ -15,11 +15,11 @@ const mongoConfig = require('@root/config.json').mongodb;
 function transformTime(time) {
     let rawTime = time.substring(0, time.length - 2);
     let split = rawTime.split(':');
-    let hour = split[0];
-    let minute = split[1];
+    let hour = parseInt(split[0]);
+    let minute = parseInt(split[1]);
 
     if (time.endsWith('pm') && hour != '12') {
-        hour = (parseInt(hour) + 12).toString();
+        hour += 12;
     }
     return { hour: hour, minute: minute };
 }
@@ -191,11 +191,11 @@ function parseSectionInfo(classid, sectionArr) {
     console.log("Parsing sections for: ", classid);
 
     for (classtime of sectionArr) {
-        var m = classtime['days'].includes("M").toString();
-        var tu = classtime['days'].includes("Tu").toString();
-        var w = classtime['days'].includes("W").toString();
-        var th = classtime['days'].includes("Th").toString();
-        var f = classtime['days'].includes("F").toString();
+        var m = classtime['days'].includes("M");
+        var tu = classtime['days'].includes("Tu");
+        var w = classtime['days'].includes("W");
+        var th = classtime['days'].includes("Th");
+        var f = classtime['days'].includes("F");
 
         var formattedStartTime = transformTime(classtime['start']);
         var formattedEndTime = transformTime(classtime['end']);
