@@ -5,6 +5,26 @@ const MongoClient = require('mongodb').MongoClient;
 const mongoConfig = require('@root/config.json').mongodb;
 
 /**
+ * Helper function that converts a time of format '8:50pm' to an
+ * Object of the form { hour: '20', minute: '50' }
+ * 
+ * @param {string} time 
+ * 
+ * @returns {object}
+ */
+function transformTime(time) {
+    let rawTime = time.substring(0, time.length - 2);
+    let split = rawTime.split(':');
+    let hour = split[0];
+    let minute = split[1];
+
+    if (time.endsWith('pm') && hour != '12') {
+        hour = (parseInt(hour) + 12).toString();
+    }
+    return { hour: hour, minute: minute };
+}
+
+/**
  * Helper function that when you actually think about it, is pretty useless and overthought
  */
 function wait() {
@@ -30,8 +50,8 @@ function wait() {
  * Gets all courses for the given course category in the given semester, then
  * sets off a ~1 second delay between calling getClassInfo on each course.
  * 
- * @param {*} semester - semester code
- * @param {*} category - course category
+ * @param {string} semester - semester code
+ * @param {string} category - course category
  */
 function getClassids(semester, category) {
     request.get(
@@ -74,8 +94,8 @@ function getClassids(semester, category) {
  * objects containing section name, building, times, etc. Calls parseInfo 
  * on the list of sections.
  * 
- * @param {*} semester 
- * @param {*} classid
+ * @param {string} semester 
+ * @param {string} classid
  */
 function getClassInfo(semester, classid) {
     request.get(
@@ -162,8 +182,8 @@ function getClassInfo(semester, classid) {
  * section object for insertion into the databaes, calls storeSectionInfo on the list of
  * sections.
  * 
- * @param {*} classid 
- * @param {*} sectionArr 
+ * @param {string} classid 
+ * @param {array} sectionArr 
  */
 function parseSectionInfo(classid, sectionArr) {
     var parsedArr = [];
@@ -177,17 +197,23 @@ function parseSectionInfo(classid, sectionArr) {
         var th = classtime['days'].includes("Th").toString();
         var f = classtime['days'].includes("F").toString();
 
+        var formattedStartTime = transformTime(classtime['start']);
+        var formattedEndTime = transformTime(classtime['end']);
+
         parsedArr.push({
             course : classid,
             section : classtime['name'],
-            room : classtime['building'] + classtime['room'],
+            building: classtime['building'],
+            room : classtime['room'],
             M : m,
             Tu : tu,
             W : w,
             Th : th,
             F : f,
-            start : classtime['start'],
-            end : classtime['end'],
+            startHour: formattedStartTime['hour'],
+            startMinute: formattedStartTime['minute'],
+            endHour: formattedEndTime['hour'],
+            endMinute: formattedEndTime['minute']
         });
     }
 
@@ -202,7 +228,7 @@ function parseSectionInfo(classid, sectionArr) {
  * Takes in an array of formatted section objects, stores the section objects
  * in mongoDB based on the config file.
  * 
- * @param {*} parsedArr 
+ * @param {array} parsedArr 
  */
 function storeSectionInfo(parsedArr) {
     // this is bad - actually this isn't too bad, whole section list at a time
