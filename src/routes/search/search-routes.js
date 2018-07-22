@@ -1,7 +1,12 @@
 const router = require('koa-router')();
+const searchCourses = require('@services/course-search');
 
-router.get('/', async (ctx, next) => {
-    ctx.response.body = 'test';
+router.post('/courses', async (ctx, next) => {
+    const { body } = ctx.request;
+    const documents = await searchCourses(body);
+
+    ctx.response.body = documents;
+    return next();
 });
 
 module.exports = router.routes();

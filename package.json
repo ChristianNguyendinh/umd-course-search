@@ -29,7 +29,8 @@
   },
   "_moduleAliases": {
     "@root": ".",
-    "@routes": "src/routes"
+    "@routes": "src/routes",
+    "@services": "src/services"
   },
   "devDependencies": {
     "nodemon": "^1.18.3"
