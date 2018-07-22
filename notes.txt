@@ -26,8 +26,9 @@ MVP:
 - can search by buildings and day/time
 
 TODO:
-- find out best way to search
+- clean up search code
 - basic front end
+- unit tests
 - clean up scrape scripts (lint, async, mongo is inefficient rn, etc.) - CAN BE DONE LATER
 	- jesus this code is disguisting
 		- we should do this soon

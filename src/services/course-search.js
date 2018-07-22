@@ -2,7 +2,7 @@ require('module-alias/register');
 const MongoClient = require('mongodb').MongoClient;
 const mongoConfig = require('@root/config.json').mongodb;
 
-async function queryDB(filters, resolve, reject) {
+async function queryDB(filters) {
     const { building, hour, minute, day, room } = filters;
 
     const client = await MongoClient.connect(mongoConfig.url);
@@ -45,24 +45,14 @@ async function queryDB(filters, resolve, reject) {
         const res = await collection.find(query).toArray();
         
         console.log(res);
-        resolve(res);
+        return res;
     } 
     catch (err) {
         console.log(err);
-        reject();
     }
     finally {
         client.close();
     }
-}
-
-// db.courses.find({building: 'ATL', $expr: { $cond: { if: { $eq: ["$startHour", 8] } }, then: { $lte: ["$startMinute", 32] }, else: { $lt: ["$startHour", 8] } } })
-
-
-function queryDBPromise(filters) {
-    return new Promise(function(res, rej) {
-        queryDB(filters, res, rej);
-    });
 }
 
 // (async function() {
@@ -78,4 +68,4 @@ function queryDBPromise(filters) {
 
 // })();
 
-module.exports = queryDBPromise;
+module.exports = queryDB;
