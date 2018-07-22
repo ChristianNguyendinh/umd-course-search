@@ -39,22 +39,18 @@ function queryDB(building, hour, minute, day, room) {
         }
 
         if (hour && minute) {
-            query['$where'] = function() {
-                let start = false;
-                let end = false;
-
-                if (this.startHour < hour) {
-                    start = true;
-                } else if (this.startHour == hour) {
-                    start = this.startMinute <= minute;
+            query['$expr'] = {
+                $cond: {
+                    if: {
+                        $eq: ["$startHour", hour]
+                    },
+                    then: {
+                        $lte: ["$startMinute", minute]
+                    },
+                    else: {
+                        $lt: ["$startHour", hour]
+                    }
                 }
-
-                if (this.endHour > hour) {
-                    end = true;
-                } else if (this.endHour == hour) {
-                    end = this.endMinute >= minute;
-                }
-                return start && end;
             }
         }
         // validate day or assume validation done? worst case empty query
@@ -74,4 +70,4 @@ function queryDB(building, hour, minute, day, room) {
 
 // db.courses.find({building: 'ATL', $expr: { $cond: { if: { $eq: ["$startHour", 8] } }, then: { $lte: ["$startMinute", 32] }, else: { $lt: ["$startHour", 8] } } })
 
-queryDB('ATL', '8', '32');
+queryDB('ATL', 8, 32, undefined, '0254');

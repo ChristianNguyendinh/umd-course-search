@@ -1,7 +1,7 @@
+require('module-alias/register');
 const fs = require('fs');
 const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const mongoConfig = require('./config.json').mongodb;
+const mongoConfig = require('@root/config.json').mongodb;
 
 /**
  * Takes in a filename containing a list of buildings, and inserts
@@ -50,4 +50,11 @@ function insertBuildings(filename) {
     });
 }
 
-insertBuildings('./buildings.txt');
+var args = process.argv.slice(2);
+// for now expect one argument of the class category (ex. CMSC) we want
+if (args.length == 1) {
+    insertBuildings(args[0]);
+} else {
+    console.error("Invalid arguments");
+    console.error('Usage: node building-process.js <file path>');
+}
