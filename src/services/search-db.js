@@ -1,25 +1,6 @@
 require('module-alias/register');
 const MongoClient = require('mongodb').MongoClient;
 const mongoConfig = require('@root/config.json').mongodb;
-const assert = require('assert');
-
-function checkStartBefore(hour, minute) {
-    if (this.startHour < hour) {
-        return true;
-    } else if (this.startHour == hour) {
-        return this.startMinute <= minute;
-    }
-    return false;
-}
-
-function checkEndAfter(hour, minute) {
-    if (this.endHour > hour) {
-        return true;
-    } else if (this.endHour == hour) {
-        return this.endMinute >= minute;
-    }
-    return false;
-}
 
 function queryDB(building, hour, minute, day, room) {
     MongoClient.connect(mongoConfig.url, function (err, client) {
