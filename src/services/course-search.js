@@ -1,12 +1,11 @@
 require('module-alias/register');
 const MongoClient = require('mongodb').MongoClient;
 const mongoConfig = require('@root/config.json').mongodb;
+const ObjectId = require('mongodb').ObjectID;
 
-async function queryDB(filters) {
-    const { building, hour, minute, day, room } = filters;
-
+async function queryDB({ building, hour, minute, day, room }) {
     const client = await MongoClient.connect(mongoConfig.url);
-    const db = await client.db(mongoConfig.database)
+    const db = client.db(mongoConfig.database)
 
     try {
         const collection = db.collection(mongoConfig.courses);
@@ -40,6 +39,14 @@ async function queryDB(filters) {
         if (day) {
             query[day] = true;
         }
+
+        const secondsSinceEpoch = Math.floor((new Date(2018, 6, 28)) / 1000)
+        const objectId = new ObjectId(secondsSinceEpoch.toString(16) + "0000000000000000");
+
+        query._id = {
+            $gte: objectId
+        }
+
         console.log(query);
 
         const res = await collection.find(query).toArray();
