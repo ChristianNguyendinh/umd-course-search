@@ -4,7 +4,7 @@ const mongoConfig = require('@root/config.json').mongodb;
 const ObjectId = require('mongodb').ObjectID;
 const { RESULTS_PER_PAGE } = require('@root/constants.js');
 
-async function queryDB({ building, hour, minute, day, room, timestamp, page }) {
+async function queryDB({ building, hour, minute, days, room, timestamp, page }) {
     const client = await MongoClient.connect(mongoConfig.url);
     const db = client.db(mongoConfig.database)
 
@@ -36,10 +36,16 @@ async function queryDB({ building, hour, minute, day, room, timestamp, page }) {
             }
         }
 
-        // validate day or assume validation done? worst case empty query
-        if (day) {
-            query[day] = true;
+        if (days) {
+            const dayQuery = []
+            for (const day of days) {
+                const dayObj = {};
+                dayObj[day] = true;
+                dayQuery.push(dayObj);
+            }
+            query['$or'] = dayQuery;
         }
+        // console.log(days);
 
         if (timestamp) {
             const secondsSinceEpoch = Math.floor(timestamp / 1000)

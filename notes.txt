@@ -29,6 +29,7 @@ TODO:
 - clean up search code
 - basic front end
 - unit tests
+- api validation
 - clean up scrape scripts (lint, async, mongo is inefficient rn, etc.) - CAN BE DONE LATER
 	- jesus this code is disguisting
 		- we should do this soon

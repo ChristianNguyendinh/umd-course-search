@@ -1,6 +1,10 @@
 const router = require('koa-router')();
 const searchCourses = require('@services/course-search');
 
+router.get('/', async (ctx) => {
+    await ctx.render('search');
+});
+
 router.post('/courses', async (ctx, next) => {
     const { body } = ctx.request;
     if (!body.timestamp || isNaN(body.timestamp)) {

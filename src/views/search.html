@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script> -->
+</head>
+<body>
+    <form onsubmit="return search()">
+        <!-- { building, hour, minute, days, room, timestamp, page } -->
+        <label>Building: </label>
+        <input id="building" type="text" />
+        <label>Room: </label>
+        <input id="room" type="text" />
+        <br />
+
+        <label>Time: </label>
+        <input id="hour" type="text" size="2" maxlength="2" placeholder="00" /> : <input id="minute" type="text" size="2" maxlength="2" placeholder="00" />
+        <br />
+
+        <fieldset>
+            <legend>Day</legend>
+            <label>M</label>
+            <input type="checkbox" />
+            <label>Tu</label>
+            <input type="checkbox" />
+            <label>W</label>
+            <input type="checkbox" />
+            <label>Th</label>
+            <input type="checkbox" />
+            <label>Fr</label>
+            <input type="checkbox" />
+        </fieldset>
+
+        <input type="submit" name="Submit" value="Submit" />
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        function search() {
+            $.post('/search/courses', {}).done(function(data) {
+                data.forEach(function(datum) {
+                    var res = $('<p></p>').text(JSON.stringify(datum));
+                    $('#results').append(res);
+                });
+            });
+
+            return false;
+        }
+    </script>
+</body>
+</html>
