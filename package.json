@@ -28,7 +28,7 @@
     "request": "^2.87.0"
   },
   "_moduleAliases": {
-    "@root": ".",
+    "@root": "src",
     "@routes": "src/routes",
     "@services": "src/services"
   },

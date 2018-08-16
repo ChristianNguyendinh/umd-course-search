@@ -2,8 +2,9 @@ require('module-alias/register');
 const MongoClient = require('mongodb').MongoClient;
 const mongoConfig = require('@root/config.json').mongodb;
 const ObjectId = require('mongodb').ObjectID;
+const { RESULTS_PER_PAGE } = require('@root/constants.js');
 
-async function queryDB({ building, hour, minute, day, room }) {
+async function queryDB({ building, hour, minute, day, room, timestamp, page }) {
     const client = await MongoClient.connect(mongoConfig.url);
     const db = client.db(mongoConfig.database)
 
@@ -40,18 +41,27 @@ async function queryDB({ building, hour, minute, day, room }) {
             query[day] = true;
         }
 
-        const secondsSinceEpoch = Math.floor((new Date(2018, 6, 28)) / 1000)
-        const objectId = new ObjectId(secondsSinceEpoch.toString(16) + "0000000000000000");
+        if (timestamp) {
+            const secondsSinceEpoch = Math.floor(timestamp / 1000)
+            console.log(secondsSinceEpoch)
+            console.log(secondsSinceEpoch.toString(16) + "0000000000000000")
+            const objectId = new ObjectId(secondsSinceEpoch.toString(16) + "0000000000000000");
 
-        query._id = {
-            $gte: objectId
+            query._id = {
+                $gte: objectId
+            }
         }
 
-        console.log(query);
+        const skip = (page || 0) * RESULTS_PER_PAGE;
 
-        const res = await collection.find(query).toArray();
+        // isn't efficient for large queries because of skip - change later if speed issues
+        const res = await collection
+            .find(query)
+            .skip(skip)
+            .limit(RESULTS_PER_PAGE)
+            .toArray();
         
-        console.log(res);
+        console.log(res.length);
         return res;
     } 
     catch (err) {
