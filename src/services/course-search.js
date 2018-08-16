@@ -24,19 +24,19 @@ async function queryDB({ building, hour, minute, days, room, timestamp, page }) 
             query['$expr'] = {
                 $cond: {
                     if: {
-                        $eq: ["$startHour", hour]
+                        $eq: ["$startHour", parseInt(hour)]
                     },
                     then: {
-                        $lte: ["$startMinute", minute]
+                        $lte: ["$startMinute", parseInt(minute)]
                     },
                     else: {
-                        $lt: ["$startHour", hour]
+                        $lt: ["$startHour", parseInt(hour)]
                     }
                 }
             }
         }
 
-        if (days) {
+        if (days && days.length > 0) {
             const dayQuery = []
             for (const day of days) {
                 const dayObj = {};
@@ -45,7 +45,7 @@ async function queryDB({ building, hour, minute, days, room, timestamp, page }) 
             }
             query['$or'] = dayQuery;
         }
-        // console.log(days);
+        console.log(JSON.stringify(query));
 
         if (timestamp) {
             const secondsSinceEpoch = Math.floor(timestamp / 1000)

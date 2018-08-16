@@ -25,15 +25,15 @@
         <fieldset>
             <legend>Day</legend>
             <label>M</label>
-            <input type="checkbox" />
+            <input id="M" type="checkbox" />
             <label>Tu</label>
-            <input type="checkbox" />
+            <input id="Tu" type="checkbox" />
             <label>W</label>
-            <input type="checkbox" />
+            <input id="W" type="checkbox" />
             <label>Th</label>
-            <input type="checkbox" />
+            <input id="Th" type="checkbox" />
             <label>Fr</label>
-            <input type="checkbox" />
+            <input id="F" type="checkbox" />
         </fieldset>
 
         <input type="submit" name="Submit" value="Submit" />
@@ -42,15 +42,68 @@
     <div id="results"></div>
 
     <script>
+        var days = ['M', 'Tu', 'W', 'Th', 'F'];
+
         function search() {
-            $.post('/search/courses', {}).done(function(data) {
+            var data = {
+                building: $('#building').val(),
+                room: $('#room').val(),
+                hour: parseInt($('#hour').val()),
+                minute: parseInt($('#minute').val()),
+                days: []
+            };
+
+            days.forEach(function(day) {
+                if ($('#' + day).prop('checked')) {
+                    data.days.push(day);
+                }
+            });
+
+            console.log(data);
+
+            $.post('/search/courses', data).done(function(data) {
                 data.forEach(function(datum) {
-                    var res = $('<p></p>').text(JSON.stringify(datum));
-                    $('#results').append(res);
+                    $('#results').append(makeResultCard(datum));
                 });
             });
 
             return false;
+        }
+
+        function padTime(num) {
+            var numStr = num.toString();
+            if (numStr.length == 0) {
+                return '00';
+            }
+            if (numStr.length == 1) {
+                return '0' + numStr;
+            }
+
+            return numStr;
+        }
+
+        function makeResultCard(datum) {
+            var div = $('<div></div>');
+            div.append('<p>' + datum.course + '</p>');
+            div.append('<p>' + datum.section + '</p>');
+            div.append('<p>' + datum.building + '</p>');
+            div.append('<p>' + datum.room + '</p>');
+
+            var dayList = '';
+            days.forEach(function(day) {
+                if (datum.day) {
+                    dayList += datum.day;
+                }
+            });
+            div.append('<p>' + dayList + '</p>');
+
+            var startTime = padTime(datum.startHour) + ':' + padTime(datum.startMinute);
+            var endTime = padTime(datum.endHour) + ':' + padTime(datum.endMinute);
+
+            div.append('<p>' + startTime + '</p>');
+            div.append('<p>' + endTime + '</p>');
+
+            return div;
         }
     </script>
 </body>
