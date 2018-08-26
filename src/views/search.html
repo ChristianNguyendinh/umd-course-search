@@ -8,6 +8,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="main.js"></script> -->
+    <style>
+        .error {
+            color: red;
+        }
+        
+        .card {
+            border: 1px solid white;
+            border-radius: 15px;
+            box-shadow: 3px 3px 2px 2px #888;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
     <form onsubmit="return search()">
@@ -39,6 +51,8 @@
         <input type="submit" name="Submit" value="Submit" />
     </form>
 
+    <hr/>
+
     <div id="results"></div>
 
     <script>
@@ -46,10 +60,10 @@
 
         function search() {
             var data = {
-                building: $('#building').val(),
-                room: $('#room').val(),
-                hour: parseInt($('#hour').val()),
-                minute: parseInt($('#minute').val()),
+                building: $('#building').val() || undefined,
+                room: $('#room').val() || undefined,
+                hour: parseInt($('#hour').val()) || undefined,
+                minute: parseInt($('#minute').val()) || undefined,
                 days: []
             };
 
@@ -59,12 +73,27 @@
                 }
             });
 
-            console.log(data);
+            console.log("QUERY: ", data);
 
-            $.post('/search/courses', data).done(function(data) {
-                data.forEach(function(datum) {
-                    $('#results').append(makeResultCard(datum));
-                });
+            $.post(
+                '/search/courses',
+                data
+            ).done(function(data) {
+                console.log(data);
+                if (data && data.results && data.results.length > 0) {
+                    $('#results').empty();
+
+                    data.results.forEach(function(datum) {
+                        $('#results')
+                            .append(makeResultCard(datum))
+                            .append('<hr/>');
+                    });
+                } else {
+                     $('#results').html('No Results Found');
+                }
+            }).fail(function(err) {
+                console.log(err.to);
+                $('#results').html('<p class="error">An Error Occurred Making Your Request</p>');
             });
 
             return false;
@@ -83,25 +112,22 @@
         }
 
         function makeResultCard(datum) {
-            var div = $('<div></div>');
+            var div = $('<div class="card"></div>');
             div.append('<p>' + datum.course + '</p>');
-            div.append('<p>' + datum.section + '</p>');
-            div.append('<p>' + datum.building + '</p>');
-            div.append('<p>' + datum.room + '</p>');
+            div.append('<p>Section: ' + datum.section + '</p>');
+            div.append('<p>Room: ' + datum.building + datum.room + '</p>');
 
             var dayList = '';
             days.forEach(function(day) {
-                if (datum.day) {
-                    dayList += datum.day;
+                if (datum[day]) {
+                    dayList += day;
                 }
             });
             div.append('<p>' + dayList + '</p>');
 
             var startTime = padTime(datum.startHour) + ':' + padTime(datum.startMinute);
             var endTime = padTime(datum.endHour) + ':' + padTime(datum.endMinute);
-
-            div.append('<p>' + startTime + '</p>');
-            div.append('<p>' + endTime + '</p>');
+            div.append('<p>' + startTime + ' - ' + endTime + '</p>');
 
             return div;
         }

@@ -28,6 +28,13 @@ MVP:
 TODO:
 - clean up search code
 - basic front end
+	- option to collapse multiple section results into one section?
+		- ex. a lab and discussion time meet query, gets returned
+		- actually, would have to query for meetings that don't meet criteria to make section card complete
+		- prolly not
+	- how do i style this...
+	- pagination
+	- donezo?
 - unit tests
 - api validation
 - clean up scrape scripts (lint, async, mongo is inefficient rn, etc.) - CAN BE DONE LATER

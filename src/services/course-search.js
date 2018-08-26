@@ -54,21 +54,41 @@ async function queryDB({ building, hour, minute, days, room, timestamp, page }) 
             const objectId = new ObjectId(secondsSinceEpoch.toString(16) + "0000000000000000");
 
             query._id = {
-                $gte: objectId
+                $lte: objectId
             }
         }
 
+        // page is 0 indexed
         const skip = (page || 0) * RESULTS_PER_PAGE;
 
         // isn't efficient for large queries because of skip - change later if speed issues
         const res = await collection
             .find(query)
             .skip(skip)
-            .limit(RESULTS_PER_PAGE)
-            .toArray();
+            .limit(RESULTS_PER_PAGE);
+
+        const resArray = await res.toArray();
+        console.log(resArray.length);
+
+        const ret = {
+            results: resArray
+        };
+
+        const count = await res.count();
+        if (count > 1) {
+            const ts = timestamp || (new Date()).getTime();
+            const totalPages = Math.ceil(count / RESULTS_PER_PAGE);
+
+            Object.assign(ret, {
+                timestamp: ts,
+                page: page || 0,
+                totalPages,
+                paginated: true,
+            });
+            
+        } 
         
-        console.log(res.length);
-        return res;
+        return ret;
     } 
     catch (err) {
         console.log(err);
