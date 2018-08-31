@@ -35,6 +35,7 @@ TODO: - order is fine
 - typescript?? xdxdxd
 	+2
 - autofill buildings... somehow
+- darn it... we forgot to separate by semester
 - is there a design pattern that will let us avoid setting up DB connextion each time?
 	- decorator comes to mind first
 - clean up scrape scripts (lint, async, mongo is inefficient rn, etc.) - CAN BE DONE LATER

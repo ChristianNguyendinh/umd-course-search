@@ -14,11 +14,19 @@
         }
         
         .card {
+            width: 99%;
             border: 1px solid white;
             border-radius: 15px;
-            box-shadow: 3px 3px 2px 2px #888;
-            display: inline-block;
+            box-shadow: 3px 3px 3px 3px #888;
+            display: inline-flex;
+            margin: 4px 0.5%;
         }
+
+        .card-col {
+            float: left;
+            margin: 0 3%;
+        }
+
     </style>
 </head>
 <body>
@@ -58,6 +66,7 @@
     <script>
         var days = ['M', 'Tu', 'W', 'Th', 'F'];
         var searchURI = '/search/courses';
+        var moreInfoUrl= 'https://app.testudo.umd.edu/soc/search?sectionId=&_openSectionsOnly=on&creditCompare=&credits=&courseLevelFilter=ALL&instructor=&_facetoface=on&_blended=on&_online=on&courseStartCompare=&courseStartHour=&courseStartMin=&courseStartAM=&courseEndHour=&courseEndMin=&courseEndAM=&teachingCenter=ALL&_classDay1=on&_classDay2=on&_classDay3=on&_classDay4=on&_classDay5=on'
 
         function search() {
             var data = {
@@ -113,10 +122,14 @@
         }
 
         function makeResultCard(datum) {
-            var div = $('<div class="card"></div>');
-            div.append('<p>' + datum.course + '</p>');
-            div.append('<p>Section: ' + datum.section + '</p>');
-            div.append('<p>Room: ' + datum.building + datum.room + '</p>');
+            var card = $('<div class="card"></div>');
+            var col1 = $('<div class="card-col"></div>');
+            var col2 = $('<div class="card-col"></div>');
+            var col3 = $('<div class="card-col"></div>');
+
+            col1.append('<h3 class="course">' + datum.course + '</h3>');
+            col1.append('<p class="section">Section: #<u>' + datum.section + '</u></p>');
+            col2.append('<p class="room">Room: ' + datum.building + datum.room + '</p>');
 
             var dayList = '';
             days.forEach(function(day) {
@@ -124,13 +137,24 @@
                     dayList += day;
                 }
             });
-            div.append('<p>' + dayList + '</p>');
+            col2.append('<p class="daysLabel"> Days: ' + dayList + '</p>');
 
             var startTime = padTime(datum.startHour) + ':' + padTime(datum.startMinute);
             var endTime = padTime(datum.endHour) + ':' + padTime(datum.endMinute);
-            div.append('<p>' + startTime + ' - ' + endTime + '</p>');
+            col2.append('<p class="time"> Time: ' + startTime + ' - ' + endTime + '</p>');
 
-            return div;
+            col3.append('<p><a href="' + generateMoreInfoURL(datum.course) + '">More Info</a></p>')
+
+            card.append(col1);
+            card.append(col2);
+            card.append(col3);
+
+            return card;
+        }
+
+        // temporarily hardcode semester for now - backend doesn't support multiple yet
+        function generateMoreInfoURL(courseId, semester='201808') {
+            return moreInfoUrl + '&courseId=' + courseId + '&termId=' + semester;
         }
     </script>
 </body>
