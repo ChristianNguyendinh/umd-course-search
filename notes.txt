@@ -26,22 +26,20 @@ MVP:
 - can search by buildings and day/time
 
 TODO: - order is fine
-- clean up search code
 - basic front end
-	- option to collapse multiple section results into one section?
-		- ex. a lab and discussion time meet query, gets returned
-		- actually, would have to query for meetings that don't meet criteria to make section card complete
-		- prolly not
 	- how do i style this...
 	- pagination
 	- donezo?
 - unit tests
 - api validation
+- typescript?? xdxdxd
+	+2
+- autofill buildings... somehow
+- is there a design pattern that will let us avoid setting up DB connextion each time?
+	- decorator comes to mind first
 - clean up scrape scripts (lint, async, mongo is inefficient rn, etc.) - CAN BE DONE LATER
 	- jesus this code is disguisting
 		- we should do this soon
 - actually run scripts (~10 minutes per department, 180 departments... 30 hours...) - We can actually do this as we work on other stuff if we just get a sample of data
-- typescript?? xdxdxd
-	+2
 
 

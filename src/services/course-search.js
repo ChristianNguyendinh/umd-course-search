@@ -9,7 +9,7 @@ const { RESULTS_PER_PAGE, DEFAULT_PAGE } = require('@root/constants.js');
  * 
  * @returns {object} - object with list of courses found in the 'results' key. // TODO define type with TS when that happens
  */
-module.exports = async function queryDB(options) {
+module.exports = async function(options) {
     const mongoClient = await MongoClient.connect(MONGO_CONFIG.url);
     const db = mongoClient.db(MONGO_CONFIG.database)
 
@@ -18,7 +18,8 @@ module.exports = async function queryDB(options) {
         const query = await buildQueryObject(options);
         const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;
         console.log(query);
-        // isn't efficient for large queries because of skip - change later if speed issues
+        // isn't efficient for large queries because of skip
+        // change later if need speed. pagination should be changed too if we do that
         const results = await collection
             .find(query)
             .skip(documentsToSkip)
@@ -43,9 +44,8 @@ module.exports = async function queryDB(options) {
                 totalPages,
                 paginated: true,
             });
-            
-        } 
-        
+        }
+
         return returnObject;
     } 
     catch (err) {
