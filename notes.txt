@@ -25,7 +25,7 @@ around 180 total class code
 MVP:
 - can search by buildings and day/time
 
-TODO:
+TODO: - order is fine
 - clean up search code
 - basic front end
 	- option to collapse multiple section results into one section?

@@ -1,114 +1,113 @@
-require('module-alias/register');
-const MongoClient = require('mongodb').MongoClient;
-const mongoConfig = require('@root/config.json').mongodb;
-const ObjectId = require('mongodb').ObjectID;
-const { RESULTS_PER_PAGE } = require('@root/constants.js');
+const { MongoClient, ObjectId } = require('mongodb');
+const { mongodb: MONGO_CONFIG } = require('@root/config.json');
+const { RESULTS_PER_PAGE, DEFAULT_PAGE } = require('@root/constants.js');
 
-async function queryDB({ building, hour, minute, days, room, timestamp, page }) {
-    const client = await MongoClient.connect(mongoConfig.url);
-    const db = client.db(mongoConfig.database)
+/**
+ * Query the courses DB to find all courses matching criteria defined in the parameter options object.
+ * 
+ * @param {object} options - parameters to search with 
+ * 
+ * @returns {object} - object with list of courses found in the 'results' key. // TODO define type with TS when that happens
+ */
+module.exports = async function queryDB(options) {
+    const mongoClient = await MongoClient.connect(MONGO_CONFIG.url);
+    const db = mongoClient.db(MONGO_CONFIG.database)
 
     try {
-        const collection = db.collection(mongoConfig.courses);
-        const query = {};
-
-        if (building) {
-            query['building'] = building;
-        }
-
-        if (room) {
-            query['room'] = room;
-        }
-
-        if (hour && minute) {
-            query['$expr'] = {
-                $cond: {
-                    if: {
-                        $eq: ["$startHour", parseInt(hour)]
-                    },
-                    then: {
-                        $lte: ["$startMinute", parseInt(minute)]
-                    },
-                    else: {
-                        $lt: ["$startHour", parseInt(hour)]
-                    }
-                }
-            }
-        }
-
-        if (days && days.length > 0) {
-            const dayQuery = []
-            for (const day of days) {
-                const dayObj = {};
-                dayObj[day] = true;
-                dayQuery.push(dayObj);
-            }
-            query['$or'] = dayQuery;
-        }
-        console.log(JSON.stringify(query));
-
-        if (timestamp) {
-            const secondsSinceEpoch = Math.floor(timestamp / 1000)
-            console.log(secondsSinceEpoch)
-            console.log(secondsSinceEpoch.toString(16) + "0000000000000000")
-            const objectId = new ObjectId(secondsSinceEpoch.toString(16) + "0000000000000000");
-
-            query._id = {
-                $lte: objectId
-            }
-        }
-
-        // page is 0 indexed
-        const skip = (page || 0) * RESULTS_PER_PAGE;
-
+        const collection = db.collection(MONGO_CONFIG.courses);
+        const query = await buildQueryObject(options);
+        const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;
+        console.log(query);
         // isn't efficient for large queries because of skip - change later if speed issues
-        const res = await collection
+        const results = await collection
             .find(query)
-            .skip(skip)
+            .skip(documentsToSkip)
             .limit(RESULTS_PER_PAGE);
 
-        const resArray = await res.toArray();
+        const resArray = await results.toArray();
         console.log(resArray.length);
 
-        const ret = {
+        const returnObject = {
             results: resArray
         };
 
-        const count = await res.count();
-        if (count > 1) {
-            const ts = timestamp || (new Date()).getTime();
-            const totalPages = Math.ceil(count / RESULTS_PER_PAGE);
+        const totalMatchingDocuments = await results.count();
+        if (totalMatchingDocuments > 1) {
+            // timestamp to avoid pages avoid old pagination requests being corrupted by new data
+            const ts = options.timestamp || (new Date()).getTime();
+            const totalPages = Math.ceil(totalMatchingDocuments / RESULTS_PER_PAGE);
 
-            Object.assign(ret, {
+            Object.assign(returnObject, {
                 timestamp: ts,
-                page: page || 0,
+                page: options.page || DEFAULT_PAGE,
                 totalPages,
                 paginated: true,
             });
             
         } 
         
-        return ret;
+        return returnObject;
     } 
     catch (err) {
         console.log(err);
     }
     finally {
-        client.close();
+        mongoClient.close();
     }
 }
 
-// (async function() {
-//     await queryDBPromise({
-//         building: 'ATL',
-//         hour: 8,
-//         minute: 32,
-//         day: 'Th',
-//         room: '0254'
-//     });
+/**
+ * Builds a MongoDB query based on the options provided.
+ * 
+ * @param {object} options - parameters to search with
+ * 
+ * @returns {object} - object representing MongoDB options
+ */
+function buildQueryObject({ building, hour, minute, days, room, timestamp, page }) {
+    const query = {};
 
-//     console.log('post');
+    // verbose way since mongo doesn't like explicit undefined keys
+    building && (query['building'] = building);
+    room && (query['room'] = room);
 
-// })();
+    if (hour && minute) {
+        query['$expr'] = {
+            $cond: {
+                if: {
+                    $eq: ["$startHour", parseInt(hour)]
+                },
+                then: {
+                    $lte: ["$startMinute", parseInt(minute)]
+                },
+                else: {
+                    $lt: ["$startHour", parseInt(hour)]
+                }
+            }
+        }
+    }
 
-module.exports = queryDB;
+    if (days && days.length > 0) {
+        const dayQuery = []
+        for (const day of days) {
+            // need separate object per field for proper OR ;(
+            const dayObj = {};
+            dayObj[day] = true;
+            dayQuery.push(dayObj);
+        }
+        query['$or'] = dayQuery;
+    }
+
+    if (timestamp) {
+        const secondsSinceEpoch = Math.floor(timestamp / 1000)
+        console.log(secondsSinceEpoch)
+        console.log(secondsSinceEpoch.toString(16) + "0000000000000000")
+        // this will actually break if timestamp is set to REALLY far in past...
+        const objectId = new ObjectId(secondsSinceEpoch.toString(16) + "0000000000000000");
+
+        query['_id'] = {
+            $lte: objectId
+        }
+    }
+
+    return query;
+}
