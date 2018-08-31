@@ -28,7 +28,7 @@ MVP:
 TODO: - order is fine
 - basic front end
 	- how do i style this...
-	- pagination
+	- pagination - clean up frontend
 	- donezo?
 - unit tests
 - api validation

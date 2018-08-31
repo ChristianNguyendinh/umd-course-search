@@ -27,6 +27,26 @@
             margin: 0 3%;
         }
 
+        .page-number {
+            border: 1px solid gray;
+            padding: 2px 4px;
+            margin: 0 5px;
+            background-color: lightcoral;
+        }
+
+        .page-number:hover {
+            background-color: lightsalmon;
+            cursor: pointer;
+        }
+
+        #page-bar {
+            margin: 3px;
+        }
+
+        #page-info {
+            margin: 3px;
+        }
+
     </style>
 </head>
 <body>
@@ -37,9 +57,11 @@
         <label>Room: </label>
         <input id="room" type="text" />
         <br />
+        <br />
 
         <label>Time: </label>
         <input id="hour" type="text" size="2" maxlength="2" placeholder="00" /> : <input id="minute" type="text" size="2" maxlength="2" placeholder="00" />
+        <br />
         <br />
 
         <fieldset>
@@ -55,6 +77,7 @@
             <label>Fr</label>
             <input id="F" type="checkbox" />
         </fieldset>
+        <br />
 
         <input type="submit" name="Submit" value="Submit" />
     </form>
@@ -63,35 +86,49 @@
 
     <div id="results"></div>
 
+    <center id="page-nav-container">
+        <div id="page-bar">test</div>
+        <div id="page-info">1</div>
+    </center>
+
     <script>
         var days = ['M', 'Tu', 'W', 'Th', 'F'];
         var searchURI = '/search/courses';
         var moreInfoUrl= 'https://app.testudo.umd.edu/soc/search?sectionId=&_openSectionsOnly=on&creditCompare=&credits=&courseLevelFilter=ALL&instructor=&_facetoface=on&_blended=on&_online=on&courseStartCompare=&courseStartHour=&courseStartMin=&courseStartAM=&courseEndHour=&courseEndMin=&courseEndAM=&teachingCenter=ALL&_classDay1=on&_classDay2=on&_classDay3=on&_classDay4=on&_classDay5=on'
 
-        function search() {
-            var data = {
-                building: $('#building').val() || undefined,
-                room: $('#room').val() || undefined,
-                hour: parseInt($('#hour').val()) || undefined,
-                minute: parseInt($('#minute').val()) || undefined,
-                days: []
-            };
+        function search(query) {
+            var queryData;
+            if (query) {
+                queryData = query;
+            } else {
+                queryData = {
+                    building: $('#building').val() || undefined,
+                    room: $('#room').val() || undefined,
+                    hour: parseInt($('#hour').val()) || undefined,
+                    minute: parseInt($('#minute').val()) || undefined,
+                    days: []
+                };
 
-            days.forEach(function(day) {
-                if ($('#' + day).prop('checked')) {
-                    data.days.push(day);
-                }
-            });
-
-            console.log("QUERY: ", data);
+                days.forEach(function(day) {
+                    if ($('#' + day).prop('checked')) {
+                        queryData.days.push(day);
+                    }
+                });
+            }
+            console.log("QUERY: ", queryData);
 
             $.post(
                 searchURI,
-                data
+                queryData
             ).done(function(data) {
                 console.log(data);
                 if (data && data.results && data.results.length > 0) {
                     $('#results').empty();
+                    
+                    // if query already existed, page nav already exists
+                    if (!query) {
+                        createPageBar(queryData, data);
+                    }
 
                     data.results.forEach(function(datum) {
                         $('#results')
@@ -99,14 +136,33 @@
                             .append('<hr/>');
                     });
                 } else {
-                     $('#results').html('No Results Found');
+                    $('#results').html('No Results Found');
+                    clearPageBar();
                 }
             }).fail(function(err) {
-                console.log(err.to);
+                console.log(err.toString());
                 $('#results').html('<p class="error">An Error Occurred Making Your Request</p>');
             });
 
             return false;
+        }
+
+        function createPageBar(query, data) {
+            if (data.paginated) {
+                $('#page-bar').empty();
+                for (var pagenum = 1; pagenum <= data.totalPages; pagenum++) {
+                    var newQuery = Object.assign({ page: pagenum - 1 }, query);
+                    $('#page-bar').append('<span class="page-number" onclick="search(' + JSON.stringify(newQuery).replace(/"/g, '\'') + ')">' + pagenum + '</span>');
+                }
+                $('#page-info').html('Page ' + (parseInt(data.page) + 1) + ' of ' + data.totalPages);
+            } else {
+                $('#page-info').html('Page 1 of 1');
+            }
+        }
+
+        function clearPageBar() {
+            $('#page-info').empty();
+            $('#page-bar').empty();
         }
 
         function padTime(num) {
