@@ -10,11 +10,13 @@ const { RESULTS_PER_PAGE, DEFAULT_PAGE } = require('@root/constants.js');
  * @returns {object} - object with list of courses found in the 'results' key. // TODO define type with TS when that happens
  */
 module.exports = async function(options) {
-    const mongoClient = await MongoClient.connect(MONGO_CONFIG.url);
-    const db = mongoClient.db(MONGO_CONFIG.database)
+    let mongoClient;
 
     try {
+        mongoClient = await MongoClient.connect(MONGO_CONFIG.url);
+        const db = mongoClient.db(MONGO_CONFIG.database);
         const collection = db.collection(MONGO_CONFIG.courses);
+
         const query = await buildQueryObject(options);
         const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;
         console.log(query);
@@ -34,25 +36,16 @@ module.exports = async function(options) {
 
         const totalMatchingDocuments = await results.count();
         if (totalMatchingDocuments > 1) {
-            // timestamp to avoid pages avoid old pagination requests being corrupted by new data
-            const ts = options.timestamp || (new Date()).getTime();
-            const totalPages = Math.ceil(totalMatchingDocuments / RESULTS_PER_PAGE);
-
-            Object.assign(returnObject, {
-                timestamp: ts,
-                page: options.page || DEFAULT_PAGE,
-                totalPages,
-                paginated: true,
-            });
+            const paginationInfo = generatePaginationInfo(options.timestamp, options.page, totalMatchingDocuments);
+            Object.assign(returnObject, paginationInfo);
         }
 
         return returnObject;
-    } 
-    catch (err) {
-        console.log(err);
     }
     finally {
-        mongoClient.close();
+        if (mongoClient) {
+            mongoClient.close();
+        }
     }
 }
 
@@ -110,4 +103,17 @@ function buildQueryObject({ building, hour, minute, days, room, timestamp, page 
     }
 
     return query;
+}
+
+function generatePaginationInfo(oldTimestamp, page, totalMatchingDocuments) {
+    // timestamp to avoid pages avoid old pagination requests being corrupted by new data
+    const ts = oldTimestamp || (new Date()).getTime();
+    const totalPages = Math.ceil(totalMatchingDocuments / RESULTS_PER_PAGE);
+
+    return {
+        timestamp: ts,
+        page: page || DEFAULT_PAGE,
+        totalPages,
+        paginated: true,
+    };
 }

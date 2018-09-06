@@ -10,7 +10,7 @@ const fieldsToInclude = {
 
 /**
  * Temporary for testing.
- * Get list of valid buildings.
+ * Get list of valid buildings and their properites.
  *
  * @returns {object} - object with list of valid buildings as `results` key
  */

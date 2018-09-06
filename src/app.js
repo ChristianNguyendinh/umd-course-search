@@ -12,6 +12,14 @@ app.use(views(`${__dirname}/views`, {
     }
 }));
 
+app.use(async (ctx, next) => {
+    try {
+        await next();
+    } catch (err) {
+        console.log('Uncaught Error: ', err);
+    }
+})
+
 app.use(routes.routes());
 app.use(routes.allowedMethods());
 
