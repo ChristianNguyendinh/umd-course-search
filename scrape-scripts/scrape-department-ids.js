@@ -15,15 +15,16 @@ function scrapeDepartmentIds(semester) {
                 "baseUrl": "https://ntst.umd.edu/",
                 "url": "soc/" + semester,
             },
-            function(err, res, body) {
+            async (err, res, body) => {
                 if (err) return console.log(err);
 
-                var $ = cheerio.load(body);
-                var classArray = [];
-                var total = $(".prefix-abbrev").length;
-                var current = 0;
+                const $ = cheerio.load(body);
+                const classArray = [];
+                const total = $(".prefix-abbrev").length;
+                let current = 0;
 
-                var p = new Promise(function(resolve, reject) {
+                // consider bluebird
+                await (new Promise(function(resolve, reject) {
                     $(".prefix-abbrev").each(function(i, elem) {
                         classArray.push($(this).text())
 
@@ -32,14 +33,11 @@ function scrapeDepartmentIds(semester) {
                             resolve()
                         }
                     });
-                }).then(function(success) {
-                    for (var c of classArray) {
-                        console.log(c)
-                    }
-                    
-                    // getClassids(semester, classArray)
+                }));
 
-                }); 
+                for (var c of classArray) {
+                    console.log(c)
+                }
             }
         );
     }

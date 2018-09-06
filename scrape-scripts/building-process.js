@@ -14,7 +14,7 @@ const mongoConfig = require('@root/config.json').mongodb;
  * @returns {undefined}
  */
 function insertBuildings(filename) {
-    fs.readFile(filename, 'utf8', function (err, data) {
+    fs.readFile(filename, 'utf8', (err, data) => {
         if (err) throw(err);
 
         MongoClient.connect(mongoConfig.url, function (err, client) {
@@ -40,7 +40,7 @@ function insertBuildings(filename) {
 
             // console.log(formatted[1]);
 
-            collection.insertMany(formatted, function (err, result) {
+            collection.insertMany(formatted, (err, result) => {
                 if (err) return console.log("Error inserting");
                 console.log("Number of inserted building documents: ", result.ops.length);
 
@@ -50,7 +50,7 @@ function insertBuildings(filename) {
     });
 }
 
-var args = process.argv.slice(2);
+const args = process.argv.slice(2);
 // for now expect one argument of the class category (ex. CMSC) we want
 if (args.length == 1) {
     insertBuildings(args[0]);

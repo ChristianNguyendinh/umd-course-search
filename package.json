@@ -2,7 +2,7 @@
   "name": "search_umd_courses",
   "version": "1.0.0",
   "description": "",
-  "main": "class_info_scrape.js",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "watch": "nodemon src/server.js",

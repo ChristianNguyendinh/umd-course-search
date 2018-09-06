@@ -28,15 +28,7 @@ function transformTime(time) {
  * Helper function that when you actually think about it, is pretty useless and overthought
  */
 function wait() {
-    var i = 0;
-    /*
-    We want to run something on all elements of a function, but have it wait between each one.
-    A raw setTimeout function will all be kicked off relatively at the same time by a for loop,
-    so they will all execute at relatively the same time.
-    So, we return a closure and every time the inner function is called, it waits by one more second.
-    Thus with all functions being kicked off around the same time, the first would wait 1 sec, second
-    2 secs, etc... making a one sec different between each call
-    */
+    const i = 0;
     return function(semester, cid) {
         i += 1;
         setTimeout(() => { 
