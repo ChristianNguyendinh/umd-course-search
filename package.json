@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "watch": "nodemon src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test:unit",
+    "test:unit": "mocha test/common.js 'test/unit/**/*.js'"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,11 @@
     "@services": "src/services"
   },
   "devDependencies": {
-    "nodemon": "^1.18.3"
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.3",
+    "sinon": "^6.2.0",
+    "sinon-chai": "^3.2.0"
   }
 }

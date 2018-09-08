@@ -19,7 +19,7 @@ module.exports = async function(options = {}) {
 
         const query = await buildQueryObject(options);
         const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;
-        console.log(query);
+        console.log('[info] query: ', query);
         // isn't efficient for large queries because of skip
         // change later if need speed. pagination should be changed too if we do that
         const results = await collection
@@ -28,7 +28,8 @@ module.exports = async function(options = {}) {
             .limit(RESULTS_PER_PAGE);
 
         const resArray = await results.toArray();
-        console.log(resArray.length);
+        // console logs now until we add a logger
+        console.log('[info] number of results: ', resArray.length);
 
         const returnObject = {
             results: resArray
@@ -103,8 +104,6 @@ function buildQueryObject({ building, hour, minute, days, room, timestamp }) {
 
     if (timestamp) {
         const secondsSinceEpoch = Math.floor(timestamp / 1000)
-        console.log(secondsSinceEpoch)
-        console.log(secondsSinceEpoch.toString(16) + "0000000000000000")
         // this will actually break if timestamp is set to REALLY far in past...
         const objectId = new ObjectId(secondsSinceEpoch.toString(16) + "0000000000000000");
 
