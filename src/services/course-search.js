@@ -9,7 +9,7 @@ const { RESULTS_PER_PAGE, DEFAULT_PAGE } = require('@root/constants.js');
  * 
  * @returns {object} - object with list of courses found in the 'results' key. // TODO define type with TS when that happens
  */
-module.exports = async function(options) {
+module.exports = async function(options = {}) {
     let mongoClient;
 
     try {
@@ -35,7 +35,7 @@ module.exports = async function(options) {
         };
 
         const totalMatchingDocuments = await results.count();
-        if (totalMatchingDocuments > 1) {
+        if (totalMatchingDocuments > RESULTS_PER_PAGE || !isNaN(options.page)) {
             const paginationInfo = generatePaginationInfo(options.timestamp, options.page, totalMatchingDocuments);
             Object.assign(returnObject, paginationInfo);
         }
@@ -56,7 +56,7 @@ module.exports = async function(options) {
  * 
  * @returns {object} - object representing MongoDB options
  */
-function buildQueryObject({ building, hour, minute, days, room, timestamp, page }) {
+function buildQueryObject({ building, hour, minute, days, room, timestamp }) {
     const query = {};
 
     // verbose way since mongo doesn't like explicit undefined keys
@@ -64,8 +64,8 @@ function buildQueryObject({ building, hour, minute, days, room, timestamp, page 
     room && (query['room'] = room);
 
     if (hour && minute) {
-        query['$expr'] = {
-            $cond: {
+        query['$and'] = [
+            { $expr: { $cond: {
                 if: {
                     $eq: ["$startHour", parseInt(hour)]
                 },
@@ -75,8 +75,19 @@ function buildQueryObject({ building, hour, minute, days, room, timestamp, page 
                 else: {
                     $lt: ["$startHour", parseInt(hour)]
                 }
-            }
-        }
+            } } },
+            { $expr: { $cond: {
+                if: {
+                    $eq: ["$endhour", parseInt(hour)]
+                },
+                then: {
+                    $gte: ["$endMinute", parseInt(minute)]
+                },
+                else: {
+                    $gt: ["$endHour", parseInt(hour)]
+                }
+            } } }
+        ]
     }
 
     if (days && days.length > 0) {
