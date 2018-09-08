@@ -8,8 +8,9 @@ Rest of README to come after some housekeeping tasks.
 
 ## TODO:
 - tests
-- linter
 - convert to typescript
+- linter
+- logger
 - actual frontend
 - autofill buildings
 - deploy MVP
