@@ -6,8 +6,42 @@ To be integrated into my [UMD CS course registration tracker](https://github.com
 
 Rest of README to come after some housekeeping tasks.
 
-## TODO:
-- tests
+## Setup:
+
+0. Setup `MongoDB`. Settings in `src/config.json`. Scrape scripts (ugly) will scrape the data into Mongo.
+
+1. Use proper `node` version (8.7.0), using `nvm` or some other method
+
+```
+$ nvm use
+```
+
+2. Install dependecies
+
+```
+npm install
+```
+
+3. Ensure `MongoDB` instance is running
+
+4. Start the application
+
+- `npm run start` starts the server
+- `PORT=4001 npm run start` starts the server on port 4001
+
+## Development:
+
+`npm run watch` starts the server and restarts on changes to any file in `src/`
+
+`npm run test:unit` runs unit tests
+
+Scrape scripts for gathering data work, but need to be cleaned up.
+
+### TODO:
+- clean up duplicated connecting to mongo
+- finish unit tests
+- api validation
+- api tests
 - convert to typescript
 - linter
 - logger
