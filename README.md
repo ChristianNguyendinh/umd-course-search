@@ -19,7 +19,7 @@ $ nvm use
 2. Install dependecies
 
 ```
-npm install
+$ npm install
 ```
 
 3. Ensure `MongoDB` instance is running

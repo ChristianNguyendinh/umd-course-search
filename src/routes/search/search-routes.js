@@ -1,26 +1,47 @@
-const router = require('koa-router')();
+const joiRouter = require('koa-joi-router');
+const Joi = joiRouter.Joi;
+const routes = joiRouter();
 const searchCourses = require('@services/course-search');
 const searchBuildings = require('@services/building-search');
 
+routes.route({
+    method: 'post',
+    path: '/courses',
+    validate: {
+        body: {
+            building: Joi.string().optional(),
+            hour: Joi.number().min(0).max(23).optional(),
+            minute: Joi.number().min(0).max(59).optional(),
+            days: Joi.array().items(Joi.string().valid('M', 'Tu', 'W', 'Th', 'F')).optional(),
+            room: Joi.string().optional(),
+            timestamp: Joi.number().optional(),
+            page: Joi.number().optional()
+        },
+        type: 'json'
+    },
+    handler: async (ctx, next) => {
+        const { body } = ctx.request; 
+        body.timestamp = parseInt(body.timestamp) || 0;
 
-router.post('/courses', async (ctx, next) => {
-    const { body } = ctx.request; 
-    body.timestamp = parseInt(body.timestamp) || 0;
+        try {
+            ctx.response.body = await searchCourses(body);
+        } catch (err) {
+            ctx.response.status = 500;
+            console.log('Error querying the courses database: ', err);
+        }
 
-    try {
-        ctx.response.body = await searchCourses(body);
-    } catch (err) {
-        ctx.response.status = 500;
-        console.log('Error querying the courses database: ', err);
+        return next();
     }
-
-    return next();
 });
 
-router.get('/buildings', async (ctx, next) => {
-    ctx.response.body = await searchBuildings();
+routes.route({
+    method: 'get',
+    path: '/buildings',
+    handler: async (ctx, next) => {
+        ctx.response.body = await searchBuildings();
 
-    return next();
+        return next();
+    }
 });
 
-module.exports = router.routes();
+module.exports = routes.middleware();

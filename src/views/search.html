@@ -119,33 +119,37 @@
             }
             console.log("QUERY: ", queryData);
 
-            $.post(
-                searchURI,
-                queryData
-            ).done(function(data) {
-                console.log(data);
-                if (data && data.results && data.results.length > 0) {
-                    $('#results').empty();
-                    
-                    // if query already existed, page nav already exists
-                    if (!query) {
-                        createPageBar(queryData, data);
-                    } else {
-                        updatePageNumber(data);
-                    }
+            $.ajax({
+                url: searchURI,
+                type: 'POST',
+                data: JSON.stringify(queryData),
+                contentType: 'application/json',
+                success: function(data) {
+                    console.log(data);
+                    if (data && data.results && data.results.length > 0) {
+                        $('#results').empty();
 
-                    data.results.forEach(function(datum) {
-                        $('#results')
-                            .append(makeResultCard(datum))
-                            .append('<hr/>');
-                    });
-                } else {
-                    $('#results').html('No Results Found');
-                    clearPageBar();
+                        // if query already existed, page nav already exists
+                        if (!query) {
+                            createPageBar(queryData, data);
+                        } else {
+                            updatePageNumber(data);
+                        }
+
+                        data.results.forEach(function (datum) {
+                            $('#results')
+                                .append(makeResultCard(datum))
+                                .append('<hr/>');
+                        });
+                    } else {
+                        $('#results').html('No Results Found');
+                        clearPageBar();
+                    }
+                },
+                error: function (err) {
+                    console.log(err.toString());
+                    $('#results').html('<p class="error">An Error Occurred Making Your Request</p>');
                 }
-            }).fail(function(err) {
-                console.log(err.toString());
-                $('#results').html('<p class="error">An Error Occurred Making Your Request</p>');
             });
 
             return false;
