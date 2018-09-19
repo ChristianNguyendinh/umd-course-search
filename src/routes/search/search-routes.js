@@ -4,19 +4,21 @@ const routes = joiRouter();
 const searchCourses = require('@services/course-search');
 const searchBuildings = require('@services/building-search');
 
+const courseSearchBodySchema = {
+    building: Joi.string().optional(),
+    hour: Joi.number().min(0).max(23).optional(),
+    minute: Joi.number().min(0).max(59).optional(),
+    days: Joi.array().items(Joi.string().valid('M', 'Tu', 'W', 'Th', 'F')).optional(),
+    room: Joi.string().optional(),
+    timestamp: Joi.number().optional(),
+    page: Joi.number().optional()
+};
+
 routes.route({
     method: 'post',
     path: '/courses',
     validate: {
-        body: {
-            building: Joi.string().optional(),
-            hour: Joi.number().min(0).max(23).optional(),
-            minute: Joi.number().min(0).max(59).optional(),
-            days: Joi.array().items(Joi.string().valid('M', 'Tu', 'W', 'Th', 'F')).optional(),
-            room: Joi.string().optional(),
-            timestamp: Joi.number().optional(),
-            page: Joi.number().optional()
-        },
+        body: courseSearchBodySchema,
         type: 'json'
     },
     handler: async (ctx, next) => {
