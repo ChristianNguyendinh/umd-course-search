@@ -38,7 +38,6 @@ $ npm install
 Scrape scripts for gathering data work, but need to be cleaned up.
 
 ### TODO:
-- clean up duplicated connecting to mongo
 - finish unit tests
 - api validation
 - api tests

@@ -1,5 +1,4 @@
 const { MongoClient, ObjectId } = require('mongodb');
-const { mongodb: MONGO_CONFIG } = require('@root/config.json');
 const { RESULTS_PER_PAGE } = require('@root/constants.js');
 const sinon = require('sinon');
 const searchCourses = require('@services/course-search');
@@ -53,30 +52,6 @@ describe('Course Search', () => {
 
     afterEach(() => {
         sinon.restore();
-    });
-
-    it('should connect to appropriate MongoDB database and collection', async () => {
-        await searchCourses();
-
-        mongoConnectionStub.should.have.been.calledOnce;
-        mongoConnectionStub.should.have.been.calledWith(MONGO_CONFIG.url);
-
-        mongoDbStub.should.have.been.calledOnce;
-        mongoDbStub.should.have.been.calledWith(MONGO_CONFIG.database);
-
-        mongoCollectionStub.should.have.been.calledOnce;
-        mongoCollectionStub.should.have.been.calledWith(MONGO_CONFIG.courses);
-
-        mongoCloseStub.should.have.been.calledOnce;
-    });
-
-    it('should close the MongoClient on error', async () => {
-        const errorMessage = 'Test Error Message';
-        mongoCollectionStub.throws(new Error(errorMessage));
-
-        await (searchCourses()).should.be.rejectedWith(Error, errorMessage);
-
-        mongoCloseStub.should.have.been.calledOnce;
     });
 
     it('should return an object with results array', async () => {

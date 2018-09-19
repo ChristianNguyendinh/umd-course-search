@@ -1,6 +1,7 @@
-const { MongoClient, ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const { mongodb: MONGO_CONFIG } = require('@root/config.json');
 const { RESULTS_PER_PAGE, DEFAULT_PAGE } = require('@root/constants.js');
+const mongoCollectionConnect = require('@services/mongo-collection-connect');
 
 /**
  * Query the courses DB to find all courses matching criteria defined in the parameter options object.
@@ -9,14 +10,8 @@ const { RESULTS_PER_PAGE, DEFAULT_PAGE } = require('@root/constants.js');
  * 
  * @returns {object} - object with list of courses found in the 'results' key. // TODO define type with TS when that happens
  */
-module.exports = async function(options = {}) {
-    let mongoClient;
-
-    try {
-        mongoClient = await MongoClient.connect(MONGO_CONFIG.url);
-        const db = mongoClient.db(MONGO_CONFIG.database);
-        const collection = db.collection(MONGO_CONFIG.courses);
-
+module.exports = async (options = {}) => {
+    return await mongoCollectionConnect(MONGO_CONFIG.courses, async (collection) => {
         const query = await buildQueryObject(options);
         const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;
         console.log('[info] query: ', query);
@@ -42,12 +37,7 @@ module.exports = async function(options = {}) {
         }
 
         return returnObject;
-    }
-    finally {
-        if (mongoClient) {
-            mongoClient.close();
-        }
-    }
+    });
 }
 
 /**

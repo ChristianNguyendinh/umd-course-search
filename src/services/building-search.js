@@ -1,5 +1,5 @@
-const { MongoClient } = require('mongodb');
 const { mongodb: MONGO_CONFIG } = require('@root/config.json');
+const mongoCollectionConnect = require('@services/mongo-collection-connect');
 
 const fieldsToInclude = {
     _id: 0,
@@ -14,23 +14,13 @@ const fieldsToInclude = {
  *
  * @returns {object} - object with list of valid buildings as `results` key
  */
-module.exports = async function() {
-    const mongoClient = await MongoClient.connect(MONGO_CONFIG.url);
-    const db = mongoClient.db(MONGO_CONFIG.database)
-
-    try {
-        const collection = db.collection(MONGO_CONFIG.buildings);
+module.exports = async () => {
+    return await mongoCollectionConnect(MONGO_CONFIG.buildings, async (collection) => {
         const results = await collection.find({}, { fields: fieldsToInclude });
         const resArray = await results.toArray();
 
         return {
             results: resArray
         };
-    }
-    catch (err) {
-        console.log(err);
-    }
-    finally {
-        mongoClient.close();
-    }
+    });
 }
