@@ -1,5 +1,7 @@
+import mongoCollectionConnect from '@services/mongo-collection-connect';
+import { Collection } from 'mongodb';
+
 const { mongodb: MONGO_CONFIG } = require('@root/config.json');
-const mongoCollectionConnect = require('@services/mongo-collection-connect');
 
 const fieldsToInclude = {
     _id: 0,
@@ -14,8 +16,8 @@ const fieldsToInclude = {
  *
  * @returns {object} - object with list of valid buildings as `results` key
  */
-module.exports = async () => {
-    return await mongoCollectionConnect(MONGO_CONFIG.buildings, async (collection) => {
+export default async () => {
+    return await mongoCollectionConnect(MONGO_CONFIG.buildings, async (collection: Collection) => {
         const results = await collection.find({}, { fields: fieldsToInclude });
         const resArray = await results.toArray();
 

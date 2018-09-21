@@ -1,12 +1,13 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient, Collection } from 'mongodb';
+
 const { mongodb: MONGO_CONFIG } = require('@root/config.json');
 
 /**
  * Function for connecting to mongoDB database. Passes a MongoClient collection object correponsing to the parameter
  * collection name to a callback after connecting. Wraps callback in error checking functionality.
  */
-module.exports = async function(collectionName, callback) {
-    let mongoClient;
+export default async function(collectionName: string, callback: (collection: Collection) => any) {
+    let mongoClient: MongoClient;
 
     try {
         mongoClient = await MongoClient.connect(MONGO_CONFIG.url);

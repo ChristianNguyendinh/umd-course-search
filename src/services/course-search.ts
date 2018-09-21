@@ -1,7 +1,26 @@
-const { ObjectId } = require('mongodb');
+import { RESULTS_PER_PAGE, DEFAULT_PAGE } from '@root/constants';
+import { ObjectId, Collection } from 'mongodb';
+import mongoCollectionConnect from '@services/mongo-collection-connect';
+
 const { mongodb: MONGO_CONFIG } = require('@root/config.json');
-const { RESULTS_PER_PAGE, DEFAULT_PAGE } = require('@root/constants.js');
-const mongoCollectionConnect = require('@services/mongo-collection-connect');
+
+enum DayString {
+    'M',
+    'Tu',
+    'W',
+    'Th',
+    'F'
+}
+
+interface Options {
+    building?: string,
+    hour?: number,
+    minute?: number,
+    days?: Array<DayString>,
+    room?: string,
+    timestamp?: number,
+    page?: number
+}
 
 /**
  * Query the courses DB to find all courses matching criteria defined in the parameter options object.
@@ -10,8 +29,8 @@ const mongoCollectionConnect = require('@services/mongo-collection-connect');
  * 
  * @returns {object} - object with list of courses found in the 'results' key. // TODO define type with TS when that happens
  */
-module.exports = async (options = {}) => {
-    return await mongoCollectionConnect(MONGO_CONFIG.courses, async (collection) => {
+module.exports = async (options: Options) => {
+    return await mongoCollectionConnect(MONGO_CONFIG.courses, async (collection: Collection) => {
         const query = await buildQueryObject(options);
         const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;
         console.log('[info] query: ', query);
@@ -47,8 +66,8 @@ module.exports = async (options = {}) => {
  * 
  * @returns {object} - object representing MongoDB options
  */
-function buildQueryObject({ building, hour, minute, days, room, timestamp }) {
-    const query = {};
+function buildQueryObject({ building, hour, minute, days, room, timestamp }: Options) {
+    const query: any = {};
 
     // verbose way since mongo doesn't like explicit undefined keys
     building && (query['building'] = building);
@@ -58,24 +77,24 @@ function buildQueryObject({ building, hour, minute, days, room, timestamp }) {
         query['$and'] = [
             { $expr: { $cond: {
                 if: {
-                    $eq: ["$startHour", parseInt(hour)]
+                    $eq: ["$startHour", hour]
                 },
                 then: {
-                    $lte: ["$startMinute", parseInt(minute)]
+                    $lte: ["$startMinute", minute]
                 },
                 else: {
-                    $lt: ["$startHour", parseInt(hour)]
+                    $lt: ["$startHour", hour]
                 }
             } } },
             { $expr: { $cond: {
                 if: {
-                    $eq: ["$endhour", parseInt(hour)]
+                    $eq: ["$endhour", hour]
                 },
                 then: {
-                    $gte: ["$endMinute", parseInt(minute)]
+                    $gte: ["$endMinute", minute]
                 },
                 else: {
-                    $gt: ["$endHour", parseInt(hour)]
+                    $gt: ["$endHour", hour]
                 }
             } } }
         ]
@@ -85,7 +104,7 @@ function buildQueryObject({ building, hour, minute, days, room, timestamp }) {
         const dayQuery = []
         for (const day of days) {
             // need separate object per field for proper OR ;(
-            const dayObj = {};
+            const dayObj: any = {};
             dayObj[day] = true;
             dayQuery.push(dayObj);
         }
@@ -105,7 +124,7 @@ function buildQueryObject({ building, hour, minute, days, room, timestamp }) {
     return query;
 }
 
-function generatePaginationInfo(oldTimestamp, page, totalMatchingDocuments) {
+function generatePaginationInfo(oldTimestamp: number, page: number, totalMatchingDocuments: number) {
     // timestamp to avoid pages avoid old pagination requests being corrupted by new data
     const ts = oldTimestamp || (new Date()).getTime();
     const totalPages = Math.ceil(totalMatchingDocuments / RESULTS_PER_PAGE);

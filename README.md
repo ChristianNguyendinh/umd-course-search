@@ -38,11 +38,12 @@ $ npm install
 Scrape scripts for gathering data work, but need to be cleaned up.
 
 ### TODO:
-- api tests
-- convert to typescript
+- finish converting src to typescript
+- convert tests to typescript
 - linter
+- code coverage
 - logger
-- actual frontend
+- actual frontend - maybe leave that for another project? - integrate in CS registration?
 - autofill buildings
 - deploy MVP
 - clean up old scrape scripts (i dislike my past self)

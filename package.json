@@ -4,7 +4,11 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
+    "build": "npm run clean && npm run copy && tsc",
+    "clean": "rm -rf dist/",
+    "copy": "npm run create-dirs && cp src/config.json dist && cp src/views/search.html dist/views",
+    "create-dirs": "mkdir -p dist/views",
+    "start": "node dist/server.js",
     "watch": "nodemon src/server.js",
     "test": "npm run test:unit",
     "test:unit": "mocha test/common.js 'test/unit/**/*.js'"
@@ -20,21 +24,22 @@
   },
   "homepage": "https://github.com/ChristianNguyendinh/umd-course-search#readme",
   "dependencies": {
+    "@types/joi": "^13.4.5",
+    "@types/koa": "^2.0.46",
+    "@types/koa-bodyparser": "^5.0.1",
+    "@types/koa-router": "^7.0.32",
+    "@types/koa-views": "^2.0.3",
+    "@types/mongodb": "^3.1.7",
     "cheerio": "^1.0.0-rc.2",
     "koa": "^2.5.2",
-    "koa-bodyparser": "^4.2.1",
     "koa-joi-router": "^5.1.0",
     "koa-router": "^7.4.0",
     "koa-views": "^6.1.4",
     "lodash": "^4.17.10",
     "module-alias": "^2.1.0",
     "mongodb": "^3.1.0",
-    "request": "^2.87.0"
-  },
-  "_moduleAliases": {
-    "@root": "src",
-    "@routes": "src/routes",
-    "@services": "src/services"
+    "request": "^2.87.0",
+    "typescript": "^3.0.3"
   },
   "devDependencies": {
     "chai": "^4.1.2",
@@ -45,5 +50,10 @@
     "sinon": "^6.2.0",
     "sinon-chai": "^3.2.0",
     "supertest": "^3.3.0"
+  },
+  "_moduleAliases": {
+    "@root": "dist",
+    "@routes": "dist/routes",
+    "@services": "dist/services"
   }
 }

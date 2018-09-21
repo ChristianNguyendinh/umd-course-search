@@ -1,3 +1,5 @@
+import { Context } from "koa";
+
 const joiRouter = require('koa-joi-router');
 const Joi = joiRouter.Joi;
 const routes = joiRouter();
@@ -21,8 +23,8 @@ routes.route({
         body: courseSearchBodySchema,
         type: 'json'
     },
-    handler: async (ctx, next) => {
-        const { body } = ctx.request; 
+    handler: async (ctx: Context, next: Function) => {
+        const body: any = ctx.request.body; 
         body.timestamp = parseInt(body.timestamp) || 0;
 
         try {
@@ -39,11 +41,11 @@ routes.route({
 routes.route({
     method: 'get',
     path: '/buildings',
-    handler: async (ctx, next) => {
+    handler: async (ctx: Context, next: Function) => {
         ctx.response.body = await searchBuildings();
 
         return next();
     }
 });
 
-module.exports = routes.middleware();
+export default routes.middleware();
