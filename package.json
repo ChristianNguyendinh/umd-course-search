@@ -6,8 +6,10 @@
   "scripts": {
     "build": "npm run clean && npm run copy && tsc",
     "clean": "rm -rf dist/",
-    "copy": "npm run create-dirs && cp src/config.json dist/src && cp src/views/search.html dist/src/views && cp -r test dist/",
-    "create-dirs": "mkdir -p dist/src/views",
+    "copy": "npm run create-dirs && npm run copy-non-ts && npm run copy-incompatible-tests",
+    "copy-non-ts": "cp src/config.json dist/src && cp src/views/search.html dist/src/views",
+    "copy-incompatible-tests": "cp -r test/unit/routes dist/test/unit",
+    "create-dirs": "mkdir -p dist/src/views && mkdir -p dist/test/unit",
     "start": "node dist/src/server.js",
     "watch": "nodemon src/server.js",
     "test": "npm run test:unit",
@@ -43,6 +45,13 @@
     "typescript": "^3.0.3"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.5",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/mocha": "^5.2.5",
+    "@types/proxyquire": "^1.3.28",
+    "@types/sinon": "^5.0.2",
+    "@types/sinon-chai": "^3.2.0",
+    "@types/supertest": "^2.0.6",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "mocha": "^5.2.0",

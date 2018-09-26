@@ -2,8 +2,9 @@ import { Context } from "koa";
 import joiRouter from 'koa-joi-router';
 
 // don't es6 import cause we can't stub with proxyquire :( - need to research more
-const searchCourses = require('@services/course-search');
-const searchBuildings = require('@services/building-search');
+// require to make work with tests for now
+const searchCourses = require('@services/course-search').default;
+const searchBuildings = require('@services/building-search').default;
 
 const Joi = joiRouter.Joi;
 const routes = joiRouter();

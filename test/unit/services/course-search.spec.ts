@@ -1,21 +1,21 @@
-const { MongoClient, ObjectId } = require('mongodb');
-const { RESULTS_PER_PAGE } = require('@root/constants.js');
-const sinon = require('sinon');
-const searchCourses = require('@services/course-search').default;
+import { MongoClient, ObjectId } from 'mongodb';
+import { RESULTS_PER_PAGE } from '@root/constants.js';
+import sinon, { SinonStub } from 'sinon';
+import searchCourses from '@services/course-search';
 
 describe('Course Search', () => {
     const RESULT_ARRAY = ['some', 'results'];
     const DEFAULT_COUNT = 0;
-    let mongoConnectionStub;
-    let mongoCloseStub;
-    let mongoDbStub;
-    let mongoCollectionStub;
+    let mongoConnectionStub: SinonStub;
+    let mongoCloseStub: SinonStub;
+    let mongoDbStub: SinonStub;
+    let mongoCollectionStub: SinonStub;
     let collectionInstance;
-    let findStub;
-    let skipStub;
-    let limitStub;
-    let toArrayStub;
-    let countStub;
+    let findStub: SinonStub;
+    let skipStub: SinonStub;
+    let limitStub: SinonStub;
+    let toArrayStub: SinonStub;
+    let countStub: SinonStub;
 
     beforeEach(() => {
         // initialize to preserve reference for chaining methods
@@ -114,7 +114,7 @@ describe('Course Search', () => {
             }
         }
 
-        await searchCourses(options);
+        await searchCourses(options as any);
 
         findStub.should.have.been.calledOnce;
         findStub.should.have.been.calledWith(expectedQuery);

@@ -1,14 +1,14 @@
-const { MongoClient } = require('mongodb');
-const { mongodb: MONGO_CONFIG } = require('@root/config.json');
-const sinon = require('sinon');
-const mongoCollectionConnect = require('@services/mongo-collection-connect').default;
+import { MongoClient } from 'mongodb';
+import { mongodb as MONGO_CONFIG } from '@root/config.json';
+import sinon, { SinonStub } from 'sinon';
+import mongoCollectionConnect from '@services/mongo-collection-connect';
 
 describe('Mongo Collection Connect', () => {
-    let mongoConnectionStub;
-    let mongoCloseStub;
-    let mongoDbStub;
-    let mongoCollectionStub;
-    let callbackStub;
+    let mongoConnectionStub: SinonStub;
+    let mongoCloseStub: SinonStub;
+    let mongoDbStub: SinonStub;
+    let mongoCollectionStub: SinonStub;
+    let callbackStub: SinonStub;
 
     beforeEach(() => {
         mongoCloseStub = sinon.stub();

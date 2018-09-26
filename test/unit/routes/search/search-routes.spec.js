@@ -1,3 +1,4 @@
+/** TODO: research how to make proxyquire work with es6 + TS */
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const Koa = require('koa');
@@ -30,7 +31,9 @@ describe('Search Routes', () => {
             searchCoursesStub = sinon.stub().returns(MOCK_RESPONSE);
 
             courseSearchRoutes = proxyquire('@routes/search/search-routes', {
-                '@services/course-search': searchCoursesStub
+                '@services/course-search': {
+                    default: searchCoursesStub
+                }
             });
 
             const app = new Koa();
