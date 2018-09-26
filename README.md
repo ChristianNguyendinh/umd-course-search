@@ -38,8 +38,6 @@ $ npm install
 Scrape scripts for gathering data work, but need to be cleaned up.
 
 ### TODO:
-- finish converting src to typescript
-- convert tests to typescript
 - linter
 - code coverage
 - logger
@@ -47,3 +45,4 @@ Scrape scripts for gathering data work, but need to be cleaned up.
 - autofill buildings
 - deploy MVP
 - clean up old scrape scripts (i dislike my past self)
+- research proxyquire workarounds for route tests
