@@ -6,12 +6,12 @@
   "scripts": {
     "build": "npm run clean && npm run copy && tsc",
     "clean": "rm -rf dist/",
-    "copy": "npm run create-dirs && cp src/config.json dist && cp src/views/search.html dist/views",
-    "create-dirs": "mkdir -p dist/views",
-    "start": "node dist/server.js",
+    "copy": "npm run create-dirs && cp src/config.json dist/src && cp src/views/search.html dist/src/views",
+    "create-dirs": "mkdir -p dist/src/views",
+    "start": "node dist/src/server.js",
     "watch": "nodemon src/server.js",
     "test": "npm run test:unit",
-    "test:unit": "mocha test/common.js 'test/unit/**/*.js'"
+    "test:unit": "mocha dist/test/common.js 'dist/test/unit/**/*.js'"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "@types/joi": "^13.4.5",
     "@types/koa": "^2.0.46",
     "@types/koa-bodyparser": "^5.0.1",
+    "@types/koa-joi-router": "^5.0.3",
     "@types/koa-router": "^7.0.32",
     "@types/koa-views": "^2.0.3",
     "@types/mongodb": "^3.1.7",
@@ -52,8 +53,8 @@
     "supertest": "^3.3.0"
   },
   "_moduleAliases": {
-    "@root": "dist",
-    "@routes": "dist/routes",
-    "@services": "dist/services"
+    "@root": "dist/src",
+    "@routes": "dist/src/routes",
+    "@services": "dist/src/services"
   }
 }

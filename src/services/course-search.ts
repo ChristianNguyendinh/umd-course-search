@@ -29,7 +29,7 @@ interface Options {
  * 
  * @returns {object} - object with list of courses found in the 'results' key. // TODO define type with TS when that happens
  */
-module.exports = async (options: Options) => {
+export default async (options: Options) => {
     return await mongoCollectionConnect(MONGO_CONFIG.courses, async (collection: Collection) => {
         const query = await buildQueryObject(options);
         const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;

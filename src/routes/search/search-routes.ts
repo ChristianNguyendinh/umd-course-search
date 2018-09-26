@@ -1,10 +1,11 @@
 import { Context } from "koa";
 
-const joiRouter = require('koa-joi-router');
+import joiRouter from 'koa-joi-router';
+import searchCourses from '@services/course-search';
+import searchBuildings from '@services/building-search';
+
 const Joi = joiRouter.Joi;
 const routes = joiRouter();
-const searchCourses = require('@services/course-search');
-const searchBuildings = require('@services/building-search');
 
 const courseSearchBodySchema = {
     building: Joi.string().optional(),
@@ -23,7 +24,7 @@ routes.route({
         body: courseSearchBodySchema,
         type: 'json'
     },
-    handler: async (ctx: Context, next: Function) => {
+    handler: async (ctx: Context) => {
         const body: any = ctx.request.body; 
         body.timestamp = parseInt(body.timestamp) || 0;
 
@@ -33,18 +34,15 @@ routes.route({
             ctx.response.status = 500;
             console.log('Error querying the courses database: ', err);
         }
-
-        return next();
     }
 });
 
 routes.route({
     method: 'get',
     path: '/buildings',
-    handler: async (ctx: Context, next: Function) => {
+    handler: async (ctx: Context) => {
+        console.log(searchBuildings);
         ctx.response.body = await searchBuildings();
-
-        return next();
     }
 });
 
