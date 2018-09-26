@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const { mongodb: MONGO_CONFIG } = require('@root/config.json');
 const sinon = require('sinon');
-const mongoCollectionConnect = require('@services/mongo-collection-connect');
+const mongoCollectionConnect = require('@services/mongo-collection-connect').default;
 
 describe('Mongo Collection Connect', () => {
     let mongoConnectionStub;

@@ -34,7 +34,7 @@ describe('Search Routes', () => {
             });
 
             const app = new Koa();
-            app.use(courseSearchRoutes);
+            app.use(courseSearchRoutes.default);
 
             server = app.listen();
             request = supertest(server);

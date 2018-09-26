@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run clean && npm run copy && tsc",
     "clean": "rm -rf dist/",
-    "copy": "npm run create-dirs && cp src/config.json dist/src && cp src/views/search.html dist/src/views",
+    "copy": "npm run create-dirs && cp src/config.json dist/src && cp src/views/search.html dist/src/views && cp -r test dist/",
     "create-dirs": "mkdir -p dist/src/views",
     "start": "node dist/src/server.js",
     "watch": "nodemon src/server.js",

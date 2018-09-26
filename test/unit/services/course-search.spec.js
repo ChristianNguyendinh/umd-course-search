@@ -1,7 +1,7 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const { RESULTS_PER_PAGE } = require('@root/constants.js');
 const sinon = require('sinon');
-const searchCourses = require('@services/course-search');
+const searchCourses = require('@services/course-search').default;
 
 describe('Course Search', () => {
     const RESULT_ARRAY = ['some', 'results'];
