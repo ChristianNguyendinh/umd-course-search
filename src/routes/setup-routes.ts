@@ -1,4 +1,4 @@
-import { Context } from "koa";
+import { Context } from 'koa';
 import KoaRouter from 'koa-router';
 import searchRoutes from '@routes/search/search-routes';
 

@@ -39,10 +39,11 @@ Scrape scripts for gathering data work, but need to be cleaned up.
 
 ### TODO:
 - linter
-- code coverage
 - logger
 - actual frontend - maybe leave that for another project? - integrate in CS registration?
 - autofill buildings
 - deploy MVP
 - clean up old scrape scripts (i dislike my past self)
 - research proxyquire workarounds for route tests
+- code coverage - issues with istanbul + ts + module-alias
+    - see app-module-path?

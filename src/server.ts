@@ -9,4 +9,4 @@ function startServer(port: number): void {
     http.createServer(application.callback()).listen(port);
 }
 
-startServer(parseInt(process.env.PORT) || DEFAULT_PORT);
+startServer(parseInt(process.env.PORT, 10) || DEFAULT_PORT);

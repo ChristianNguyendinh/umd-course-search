@@ -3,6 +3,8 @@ import { RESULTS_PER_PAGE } from '@root/constants.js';
 import sinon, { SinonStub } from 'sinon';
 import searchCourses from '@services/course-search';
 
+/* tslint:disable:no-unused-expression */
+
 describe('Course Search', () => {
     const RESULT_ARRAY = ['some', 'results'];
     const DEFAULT_COUNT = 0;
@@ -61,17 +63,17 @@ describe('Course Search', () => {
     });
 
     it('should build an appropriate query object based on given options', async () => {
-        const dayQuery = [ { 'M': true }, { 'W': true }, { 'Th': true } ];
+        const dayQuery = [ { M: true }, { W: true }, { Th: true } ];
         const timestamp = 1000000000000;
-        const objectId = new ObjectId((timestamp / 1000).toString(16) + "0000000000000000");
+        const objectId = new ObjectId((timestamp / 1000).toString(16) + '0000000000000000');
         const options = {
             building: 'ATL',
             hour: 8,
             minute: 15,
-            days: dayQuery.map(dq => Object.keys(dq)[0]),
+            days: dayQuery.map((dq) => Object.keys(dq)[0]),
             room: '2400',
-            timestamp,
-            
+            timestamp
+
         };
         const expectedQuery = {
             building: options.building,
@@ -81,13 +83,13 @@ describe('Course Search', () => {
                     $expr: {
                         $cond: {
                             if: {
-                                $eq: ["$startHour", options.hour]
+                                $eq: ['$startHour', options.hour]
                             },
                             then: {
-                                $lte: ["$startMinute", options.minute]
+                                $lte: ['$startMinute', options.minute]
                             },
                             else: {
-                                $lt: ["$startHour", options.hour]
+                                $lt: ['$startHour', options.hour]
                             }
                         }
                     }
@@ -96,13 +98,13 @@ describe('Course Search', () => {
                     $expr: {
                         $cond: {
                             if: {
-                                $eq: ["$endhour", options.hour]
+                                $eq: ['$endhour', options.hour]
                             },
                             then: {
-                                $gte: ["$endMinute", options.minute]
+                                $gte: ['$endMinute', options.minute]
                             },
                             else: {
-                                $gt: ["$endHour", options.hour]
+                                $gt: ['$endHour', options.hour]
                             }
                         }
                     }
@@ -112,7 +114,7 @@ describe('Course Search', () => {
             _id: {
                 $lte: objectId
             }
-        }
+        };
 
         await searchCourses(options as any);
 
@@ -170,14 +172,3 @@ describe('Course Search', () => {
         res.should.have.property('timestamp');
     });
 });
-
-/* test:
-- mongo (stub)
-    - connection
-    - query
-    - proper skip based on page (stub)
-    - mongoclient close on error
-- build query object (room, building, days, hour/minute, timestamp)
-- pagination info generate
-- check return object (mainly for results array)
-*/

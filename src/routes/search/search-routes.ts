@@ -1,9 +1,11 @@
-import { Context } from "koa";
+import { Context } from 'koa';
 import joiRouter from 'koa-joi-router';
 
 // don't es6 import cause we can't stub with proxyquire :( - need to research more
 // require to make work with tests for now
+// tslint:disable-next-line
 const searchCourses = require('@services/course-search').default;
+// tslint:disable-next-line
 const searchBuildings = require('@services/building-search').default;
 
 const Joi = joiRouter.Joi;
@@ -27,8 +29,8 @@ routes.route({
         type: 'json'
     },
     handler: async (ctx: Context) => {
-        const body: any = ctx.request.body; 
-        body.timestamp = parseInt(body.timestamp) || 0;
+        const body: any = ctx.request.body;
+        body.timestamp = parseInt(body.timestamp, 10) || 0;
 
         try {
             ctx.response.body = await searchCourses(body);

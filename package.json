@@ -11,7 +11,7 @@
     "copy-incompatible-tests": "cp -r test/unit/routes dist/test/unit",
     "create-dirs": "mkdir -p dist/src/views && mkdir -p dist/test/unit",
     "start": "node dist/src/server.js",
-    "watch": "nodemon src/server.js",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "npm run test:unit",
     "test:unit": "mocha dist/test/common.js 'dist/test/unit/**/*.js'"
   },
@@ -59,7 +59,8 @@
     "proxyquire": "^2.1.0",
     "sinon": "^6.2.0",
     "sinon-chai": "^3.2.0",
-    "supertest": "^3.3.0"
+    "supertest": "^3.3.0",
+    "tslint": "^5.11.0"
   },
   "_moduleAliases": {
     "@root": "dist/src",

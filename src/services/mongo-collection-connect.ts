@@ -6,7 +6,7 @@ const { mongodb: MONGO_CONFIG } = require('@root/config.json');
  * Function for connecting to mongoDB database. Passes a MongoClient collection object correponsing to the parameter
  * collection name to a callback after connecting. Wraps callback in error checking functionality.
  */
-export default async function(collectionName: string, callback: (collection: Collection) => any) {
+export default async (collectionName: string, callback: (collection: Collection) => any) => {
     let mongoClient: MongoClient;
 
     try {

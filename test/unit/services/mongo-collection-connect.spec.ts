@@ -3,6 +3,8 @@ import { mongodb as MONGO_CONFIG } from '@root/config.json';
 import sinon, { SinonStub } from 'sinon';
 import mongoCollectionConnect from '@services/mongo-collection-connect';
 
+/* tslint:disable:no-unused-expression */
+
 describe('Mongo Collection Connect', () => {
     let mongoConnectionStub: SinonStub;
     let mongoCloseStub: SinonStub;
