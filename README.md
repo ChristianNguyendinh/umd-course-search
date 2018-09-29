@@ -38,10 +38,11 @@ $ npm install
 Scrape scripts for gathering data work, but need to be cleaned up.
 
 ### TODO:
-- logger - we can leave debugs in, but have it configed by level
+- logger unit tests
 - actual frontend - maybe leave that for another project? - i like this idea - move front end to new repo along with CS reg front end
 - deploy MVP
 - clean up old scrape scripts (i dislike my past self)
+    - consider complete rewrite with go...
 - autofill buildings (front end repo)
 - research proxyquire workarounds for route tests
 - code coverage - issues with istanbul + ts + module-alias

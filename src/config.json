@@ -4,5 +4,14 @@
         "database": "umdCourseSearch",
         "buildings": "buildings",
         "courses": "courses"
-    } 
+    },
+    "logging": {
+        "file": {
+            "level": "debug",
+            "filename": "logs.txt"
+        },
+        "console": {
+            "level": "debug"
+        }
+    }
 }

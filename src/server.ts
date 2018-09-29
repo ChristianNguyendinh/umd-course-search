@@ -1,10 +1,13 @@
 import application from './app';
 import http from 'http';
+import tagLogger from '@services/tag-logger';
+
+const logger = tagLogger('server.ts');
 
 const DEFAULT_PORT = 3000;
 
 function startServer(port: number): void {
-    console.log('Starting server on port', port);
+    logger.log('Starting server on port', port);
 
     http.createServer(application.callback()).listen(port);
 }

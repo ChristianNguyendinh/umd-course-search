@@ -1,5 +1,6 @@
 import { Context } from 'koa';
 import joiRouter from 'koa-joi-router';
+import tagLogger from '@services/tag-logger';
 
 // don't es6 import cause we can't stub with proxyquire :( - need to research more
 // require to make work with tests for now
@@ -8,6 +9,7 @@ const searchCourses = require('@services/course-search').default;
 // tslint:disable-next-line
 const searchBuildings = require('@services/building-search').default;
 
+const logger = tagLogger('search-routes.ts');
 const Joi = joiRouter.Joi;
 const routes = joiRouter();
 
@@ -36,7 +38,7 @@ routes.route({
             ctx.response.body = await searchCourses(body);
         } catch (err) {
             ctx.response.status = 500;
-            console.log('Error querying the courses database: ', err);
+            logger.error('Error querying the courses database: ', err);
         }
     }
 });
@@ -45,7 +47,7 @@ routes.route({
     method: 'get',
     path: '/buildings',
     handler: async (ctx: Context) => {
-        console.log(searchBuildings);
+        logger.debug(searchBuildings);
         ctx.response.body = await searchBuildings();
     }
 });

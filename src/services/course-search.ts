@@ -1,8 +1,10 @@
 import { RESULTS_PER_PAGE, DEFAULT_PAGE } from '@root/constants';
 import { ObjectId, Collection } from 'mongodb';
 import mongoCollectionConnect from '@services/mongo-collection-connect';
+import tagLogger from '@services/tag-logger';
 
 const { mongodb: MONGO_CONFIG } = require('@root/config.json');
+const logger = tagLogger('course-search.ts');
 
 enum DayString {
     'M',
@@ -33,7 +35,7 @@ export default async (options: IOptions = {}) => {
     return await mongoCollectionConnect(MONGO_CONFIG.courses, async (collection: Collection) => {
         const query = await buildQueryObject(options);
         const documentsToSkip = (options.page || DEFAULT_PAGE) * RESULTS_PER_PAGE;
-        console.log('[info] query: ', query);
+        logger.debug('[info] query: ', query);
         // isn't efficient for large queries because of skip
         // change later if need speed. pagination should be changed too if we do that
         const results = await collection
@@ -42,8 +44,7 @@ export default async (options: IOptions = {}) => {
             .limit(RESULTS_PER_PAGE);
 
         const resArray = await results.toArray();
-        // console logs now until we add a logger
-        console.log('[info] number of results: ', resArray.length);
+        logger.debug('[info] number of results: ', resArray.length);
 
         const returnObject = {
             results: resArray
