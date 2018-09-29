@@ -5,12 +5,14 @@
   "main": "src/server.js",
   "scripts": {
     "build": "npm run clean && npm run copy && tsc",
+    "build:start": "npm run build && npm run start",
     "clean": "rm -rf dist/",
     "copy": "npm run create-dirs && npm run copy-non-ts && npm run copy-incompatible-tests",
     "copy-non-ts": "cp src/config.json dist/src && cp src/views/search.html dist/src/views",
     "copy-incompatible-tests": "cp -r test/unit/routes dist/test/unit",
     "create-dirs": "mkdir -p dist/src/views && mkdir -p dist/test/unit",
     "start": "node dist/src/server.js",
+    "watch": "nodemon",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "npm run test:unit",
     "test:unit": "mocha dist/test/common.js 'dist/test/unit/**/*.js'"

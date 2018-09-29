@@ -38,12 +38,11 @@ $ npm install
 Scrape scripts for gathering data work, but need to be cleaned up.
 
 ### TODO:
-- linter
-- logger
-- actual frontend - maybe leave that for another project? - integrate in CS registration?
-- autofill buildings
+- logger - we can leave debugs in, but have it configed by level
+- actual frontend - maybe leave that for another project? - i like this idea - move front end to new repo along with CS reg front end
 - deploy MVP
 - clean up old scrape scripts (i dislike my past self)
+- autofill buildings (front end repo)
 - research proxyquire workarounds for route tests
 - code coverage - issues with istanbul + ts + module-alias
     - see app-module-path?
