@@ -14,7 +14,7 @@ function createTransport(logType: LogType, logConfig: ILogConfig) {
     // check for node env var to avoid writing logs during tests?
     if (logType === 'file') {
         // put file in root - kinda ugly...
-        const filename = path.join(__dirname + '../../../../logs/' + logConfig.filename);
+        const filename = path.join(__dirname, '../../../../logs/', logConfig.filename);
         return new winston.transports.File({
             level: logConfig.level,
             filename
@@ -39,7 +39,7 @@ function initializeTransports() {
 }
 
 /** singleton winston logger */
-const logger = winston.createLogger({
+let logger = winston.createLogger({
     transports: initializeTransports()
 });
 
@@ -52,14 +52,19 @@ const logger = winston.createLogger({
  * @param tag - prefix tag
  * @returns - logging object described above
  */
-export default (tag: string) => {
+export default (tag: string, reinitialize?: boolean) => {
+    if (reinitialize) {
+        logger = winston.createLogger({
+            transports: initializeTransports()
+        });
+    }
+
     const _log = (level: string, ...args: string[]) => {
         logger.log({
             level,
             message: `${tag}: ${args.join(' ')}`
         });
     };
-
     const loggingObj: any = {
         log: (...args: string[]) => {
             _log('info', ...args);
