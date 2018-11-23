@@ -4,7 +4,7 @@ import tagLogger from '@services/tag-logger';
 
 const logger = tagLogger('server.ts');
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3001;
 
 function startServer(port: number): void {
     logger.log('Starting server on port', port);

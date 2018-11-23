@@ -42,6 +42,8 @@ Scrape scripts for gathering data work, but need to be cleaned up.
 - deploy MVP
 - clean up old scrape scripts (i dislike my past self)
     - consider complete rewrite with go...
+    - move out to separate repo?
+        - i guess i can see why it belongs here though... need mongo creds
 - autofill buildings (front end repo)
 - research proxyquire workarounds for route tests
 - code coverage - issues with istanbul + ts + module-alias

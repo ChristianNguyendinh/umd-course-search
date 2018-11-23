@@ -29,6 +29,14 @@ app.use(async (ctx, next) => {
     }
 });
 
+// Allow Cross Origin Resource Sharing
+app.use(async (ctx, next) => {
+    ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
+    ctx.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+    await next();
+});
+
 app.use(routes.routes());
 app.use(routes.allowedMethods());
 
