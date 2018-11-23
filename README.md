@@ -40,7 +40,8 @@ Scrape scripts for gathering data work, but need to be cleaned up.
 ### TODO:
 - actual frontend - maybe leave that for another project? - i like this idea - move front end to new repo along with CS reg front end
 - add docs for how scrape scripts used
-- diwnload data
+- download data
+    - scrape needs to separate course code from class code (cmsc and 132)
 - deploy MVP
 - clean up old scrape scripts (i dislike my past self)
     - consider complete rewrite with go...
