@@ -4,9 +4,7 @@ import searchRoutes from '@routes/search/search-routes';
 
 const router = new KoaRouter();
 
-router.get('/', async (ctx: Context) => {
-    await ctx.render('search');
-});
+// there use to be a need for this file, i promise ;3
 
 router.use('/search', searchRoutes);
 

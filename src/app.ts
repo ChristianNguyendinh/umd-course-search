@@ -1,17 +1,10 @@
 import 'module-alias/register';
 import routes from '@routes/setup-routes';
 import Koa from 'koa';
-import views from 'koa-views';
 import tagLogger from '@services/tag-logger';
 
 const logger = tagLogger('app.ts');
 const app = new Koa();
-
-app.use(views(`${__dirname}/views`, {
-    map: {
-        html: 'lodash'
-    }
-}));
 
 app.use(async (ctx, next) => {
     try {
